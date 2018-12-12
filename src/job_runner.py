@@ -1,6 +1,6 @@
 import os
-from .service.api_client import request_endpoint
-from .service.flattener import collection_flattener
+from service.api_client import request_endpoint
+from service.flattener import collection_flattener
 
 DEFAULT_TABLE_SOURCE = "/data/in/tables/"
 DEFAULT_TABLE_DESTINATION = "/data/out/tables/"
