@@ -34,9 +34,9 @@ class Component(KBCEnvHandler):
         '''
         Main execution code
         '''
-        params = self.cfg_params # noqa
-        username = params.get('username')
-        password = params.get('#password')
+        # params = self.cfg_params # noqa
+        # username = params.get('username')
+        # password = params.get('#password')
 
         job_runner.tester()
 
