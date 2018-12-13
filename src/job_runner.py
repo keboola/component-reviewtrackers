@@ -37,4 +37,6 @@ def tester():
     for endpoint in endpoints:
         json_res = request_endpoint(username, token, endpoint, params)
         result_df = collection_flattener(json_res, endpoint)
+        if result_df is None:
+            continue
         output(endpoint, result_df)

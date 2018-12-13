@@ -28,6 +28,11 @@ def collection_flattener(json_obj, endpoint, custom_mapping_d=None):
     df_collection = None
 
     entities = json_obj.get("_embedded").get(endpoint)
+
+    if len(entities) == 0:
+        print("No object from '{}' endpoint".format(endpoint))
+        return
+
     for e in entities:
         df_e = simple_1_layer_flattener(e, custom_mapping_d)
         if df_collection is None:
