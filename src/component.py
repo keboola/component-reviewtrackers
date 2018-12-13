@@ -7,9 +7,9 @@ from kbc.env_handler import KBCEnvHandler
 import logging
 import job_runner
 
-MANDATORY_PARS = ['#API_key', 'analysis_type']
+MANDATORY_PARS = ['username', '#password']
 
-APP_VERSION = '0.0.19'
+APP_VERSION = '0.0.1'
 
 
 class Component(KBCEnvHandler):
@@ -35,13 +35,10 @@ class Component(KBCEnvHandler):
         Main execution code
         '''
         params = self.cfg_params # noqa
-        api_key = params.get('#API_key')
-        analysis_type = params.get('analysis_type')
-        tables = self.configuration.get_input_tables()
+        username = params.get('username')
+        password = params.get('#password')
 
-        for t in tables:
-            input_file_path = t["full_path"]
-            job_runner.main(input_file_path, analysis_type, api_key)
+        job_runner.tester()
 
 
 """

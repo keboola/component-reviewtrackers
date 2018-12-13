@@ -24,10 +24,17 @@ def tester():
     username = "data_ca@keboola.com"
     token = "yO9UBwnYHdq3D0JYHrMHgkHaAns="
     account_id = "5c09425a297f4a2229509d2e"
-    endpoint = "profiles"
+
     params = {
         'account_id': account_id
     }
-    json_res = request_endpoint(username, token, endpoint, params)
-    result_df = collection_flattener(json_res, endpoint)
-    output(endpoint, result_df)
+
+    endpoints = [
+        "profiles",
+        "notes"
+    ]
+
+    for endpoint in endpoints:
+        json_res = request_endpoint(username, token, endpoint, params)
+        result_df = collection_flattener(json_res, endpoint)
+        output(endpoint, result_df)
