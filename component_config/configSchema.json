@@ -1,22 +1,103 @@
 {
-    "title": "Configuration",
+    "title": "Parameters",
     "type": "object",
     "required":[
         "username",
-        "#password"
+        "#password",
+        "endpoints",
+        "metrics"
     ],
     "properties":{
         "username":{
+            "propertyOrder": 100,
             "title": "username",
             "type": "string",
             "minLength": 4
         },
         "#password":{
+            "propertyOrder": 200,
             "title": "password",
             "format": "password",
             "type": "string",
             "minLength": 1
+        },
+        "metrics": {
+          "title": "Metrics",
+          "uniqueItems": true,
+          "type": "array",
+          "description": "Add reports from: <ul><li>Overview</li><li>Monthly</li><li>Sources</li></ul>",
+          "items": {
+            "type": "object",
+            "title": "Metrics",
+            "properties":{
+              "report_type":{
+                "propertyOrder": 100,
+                "title": "Report Type",
+                "type": "string",
+                "default": "Overview",
+                "enum": [
+                  "Overview",
+                  "Monthly",
+                  "Sources"
+                ]
+              },
+              "month_after":{
+                "propertyOrder": 200,
+                "title": "Month After",
+                "type": "string"
+              },
+              "month_before":{
+                "propertyOrder": 300,
+                "title": "Month Before",
+                "type": "string"
+              }
+            },
+            "format": "table",
+            "default": {
+              "report_type": "Overview",
+              "month_after": "2018-08-01",
+              "month_before": "2018-09-01"
+            }
+          }
+        },
+        "endpoints":{
+            "propertyOrder": 400,
+            "title": "Data Endpoints",
+            "format": "select",
+            "uniqueItems": false,
+            "type": "array",
+            "description": "Select <b>All</b> or the endpoints you want to extract",
+            "default": "All",
+            "items": {
+                "default": "All",
+                "type": "string",
+                "enum": [
+                            "All",
+                            "accounts",
+                            "alert_frequencies",
+                            "alerts",
+                            "alert_types",
+                            "campaigns",
+                            "groups",
+                            "items",
+                            "layouts",
+                            "locations",
+                            "notes",
+                            "profiles",
+                            "request_pages",
+                            "requests",
+                            "request_types",
+                            "responses",
+                            "review_status_labels",
+                            "sources",
+                            "templates",
+                            "template_tags",
+                            "urls",
+                            "users",
+                            "user_types",
+                            "whitelabels"
+                ]
+            }
         }
-
     }
 }
