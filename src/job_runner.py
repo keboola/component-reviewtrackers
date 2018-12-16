@@ -36,7 +36,7 @@ def _lookup(by, by_val, get):
     if by == "endpoint" and "metrics" in by_val:
         tmp = by_val.split("/")
         by_val = "{}/{{account_id}}/{}".format(tmp[0], tmp[2])
-    df_lookup = pd.read_csv('lookup.csv')
+    df_lookup = pd.read_csv('/code/src/lookup.csv')
     df_lookup = df_lookup.loc[df_lookup[by].isin([by_val])]
     s = df_lookup[get]
     return s.tolist()[0]
