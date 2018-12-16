@@ -1,7 +1,6 @@
 import os
 import pandas as pd
 import requests
-import logging
 from requests.auth import HTTPBasicAuth
 import json
 import datetime
