@@ -66,7 +66,7 @@ def _flatten_entity(json_obj, file_name):
                 df_child = pd.DataFrame(data=v, columns=[extended_col_name])
                 df_child["{}_id".format(file_name)] = parent_id
                 df_d[extended_col_name] = df_child
-            if isinstance(v, dict):
+            elif isinstance(v, dict):
                 for leave_k in v:
                     extended_col_name = "{}_{}".format(k, leave_k)
                     result_d[extended_col_name] = v.get(leave_k)
