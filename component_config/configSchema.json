@@ -44,12 +44,14 @@
               "month_after":{
                 "propertyOrder": 200,
                 "title": "Month After",
-                "type": "string"
+                "type": "string",
+                "description": "Date Format <b>YYYY-MM-DD</b>. This is the start of your metric date range."
               },
               "month_before":{
                 "propertyOrder": 300,
                 "title": "Month Before",
-                "type": "string"
+                "type": "string",
+                "description": "Date Format <b>YYYY-MM-DD</b>. This is the end of your metric date range."
               }
             },
             "format": "table",
@@ -78,17 +80,22 @@
                             "alerts",
                             "alert_types",
                             "campaigns",
+                            "competitors",
+                            "contacts",
                             "groups",
                             "items",
                             "layouts",
                             "locations",
                             "notes",
                             "profiles",
+                            "permissions",
                             "request_pages",
                             "requests",
                             "request_types",
                             "responses",
+                            "reviews",
                             "review_status_labels",
+                            "single_sign_ons",
                             "sources",
                             "templates",
                             "template_tags",

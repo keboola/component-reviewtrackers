@@ -2,7 +2,9 @@ import requests
 import base64
 import json
 
+
 BASE_URL = "https://api.reviewtrackers.com/"
+# BASE_URL = "https://api-gateway.reviewtrackers.com/"
 
 
 def _build_headers(username, token):
@@ -16,12 +18,30 @@ def _build_headers(username, token):
     }
 
 
-def request_endpoint(username, token, endpoint, params=None):
+def request_endpoint(username, token, endpoint, params):
+    entities = []
     headers = _build_headers(username, token)
     res = requests.get(url=BASE_URL + endpoint, headers=headers, params=params)
-
+    if res.status_code == 404:
+        print(res.text)
+        return 404
     res = json.loads(res.text)
-    # todo: pagination
-    # todo: children objects
-    # todo: json to csv
-    return res
+
+    if 'metrics' in endpoint:
+        entities.append(res)
+    else:
+        # collect first page objects
+        entities += res.get("_embedded").get(endpoint)
+        total_pages = res.get('_total_pages')
+        current_page_num = int(res.get('_page'))
+
+        while current_page_num < total_pages:
+
+            entities_curr_page = res.get("_embedded").get(endpoint)
+            entities += entities_curr_page
+            current_page_num = int(res.get("_page"))
+
+            params["page"] = current_page_num + 1
+            res = requests.get(url=BASE_URL + endpoint, headers=headers, params=params)
+            res = json.loads(res.text)
+    return entities

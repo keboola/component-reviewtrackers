@@ -1,0 +1,35 @@
+index,item_name,health,endpoint,file_name,res_struc
+0,Accounts,GOOD,accounts,accounts,"L3, D2"
+1,Alert Frequencies,GOOD,alert_frequencies,alert_frequencies,simple
+2,Alerts,GOOD,alerts,alerts,empty response
+3,Alert Types,GOOD,alert_types,alert_types,simple
+4,Assignments,,assignments,assignments,-
+5,Authentication,-,authentication,authentication,-
+6,Campaign,GOOD,campaigns,campaigns,empty response
+7,Competitors,404,competitors,competitors,-
+8,Contacts,404,contacts,contacts,-
+9,Groups,GOOD,groups,groups,"L1, D0"
+10,Items,GOOD,items,items,"L0, D1"
+11,Layouts,GOOD,layouts,layouts,simple
+12,Locations,GOOD,locations,locations,"L0, D1"
+13,Metrics - Overview,GOOD,metrics/{account_id}/overview,metrics_overview,-
+14,Metrics - Overview_Monthly,GOOD,metrics/{account_id}/overview/monthly,metrics_overview_monthly,-
+15,Metrics - Sources,GOOD,metrics/{account_id}/sources,metrics_sources,-
+16,Notes,GOOD,notes,notes,empty response
+17,Permissions,404,permissions,permissions,-
+18,Profiles,GOOD,profiles,profiles,simple
+19,Request Pages,GOOD,request_pages,request_pages,"L2, D3"
+20,Requests,GOOD,requests,requests,empty response
+21,Request Types,GOOD,request_types,request_types,simple
+22,Responses,GOOD,responses,responses,simple
+23,Reviews,404,reviews,reviews,-
+24,Review Status Labels,GOOD,review_status_labels,review_status_labels,empty response
+25,Single Sign On Settings,404,single_sign_ons,single_sign_ons,-
+26,Sources,GOOD,sources,sources,"L0, D1"
+27,Templates,GOOD,templates,templates,"L0, D2"
+28,Template Tags,GOOD,template_tags,template_tags,simple
+29,Unassignments,,unassignments,unassignments,-
+30,URLs,GOOD,urls,urls,"L0, D1"
+31,Users,GOOD,users,users,"L4, D1"
+32,User Types,GOOD,user_types,user_types,"L1, D0"
+33,Whitelabel Settings,GOOD,whitelabels,whitelabels,empty response

@@ -5,7 +5,7 @@ Template Component main class.
 
 from kbc.env_handler import KBCEnvHandler
 import logging
-# import job_runner
+import job_runner
 
 MANDATORY_PARS = [
     'username',
@@ -44,12 +44,8 @@ class Component(KBCEnvHandler):
         password = params.get('#password')
         endpoints = params.get('endpoints')
         metrics = params.get('metrics')
-        print("[{}]: {}".format(type(username), username))
-        print("[{}]: {}".format(type(password), password))
-        print("[{}]: {}".format(type(endpoints), endpoints))
-        print("[{}]: {}".format(type(metrics), metrics))
 
-        # job_runner.tester()
+        job_runner.run(username, password, endpoints, metrics)
 
 
 """
