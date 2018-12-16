@@ -5,12 +5,13 @@ import logging
 from requests.auth import HTTPBasicAuth
 import json
 import datetime
+import warnings
 from service.api_client import request_endpoint
 from service.flattener import flatten
 
 DEFAULT_TABLE_SOURCE = "/data/in/tables/"
 DEFAULT_TABLE_DESTINATION = "/data/out/tables/"
-logging.getLogger("frame").setLevel(logging.ERROR)
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 def _auth(username, password):
