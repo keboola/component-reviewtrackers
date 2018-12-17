@@ -45,8 +45,10 @@ def _lookup(by, by_val, get):
 def _validate_date_format(date_text):
     try:
         datetime.datetime.strptime(date_text, '%Y-%m-%d')
+        return True
     except ValueError:
         print("Incorrect data format, should be YYYY-MM-DD")
+        return False
 
 
 def _parse_ui_metrics(ui_metrics, account_id):

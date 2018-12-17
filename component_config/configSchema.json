@@ -25,7 +25,7 @@
           "title": "Metrics",
           "uniqueItems": true,
           "type": "array",
-          "description": "Add reports from: <ul><li>Overview</li><li>Monthly</li><li>Sources</li></ul>",
+          "description": "Add metrics here. For each metric, please:<br><ol><li>Choose metric type from the dropdown</li><li>Specify the start & end of the metric period</li></ol>",
           "items": {
             "type": "object",
             "title": "Metrics",
