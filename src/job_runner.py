@@ -90,7 +90,7 @@ def _produce_manifest(file_name, primary_key):
 
     manifest = {
         "incremental": True,
-        "primary_key": primary_key
+        "primary_key": [primary_key]
     }
 
     try:
