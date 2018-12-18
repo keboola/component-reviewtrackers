@@ -117,6 +117,11 @@ def _output(filename, data):
             data.to_csv(b, index=False, header=True)
         b.close()
 
+    if "reviews_" in filename:
+        _produce_manifest(filename, "reviews_id")
+    elif filename == "reviews":
+        _produce_manifest("reviews", "id")
+
 
 def _get_last_update_time(tables):
     tracking_file_path = "/data/in/tables/metadata_ingestion_records.csv"
@@ -146,13 +151,15 @@ def _get_last_update_time(tables):
             raise ValueError
         published_after = df["review_published_before"].max()
         df_updated = df.append(df_new_record)
+        published_after = str(published_after)
     except (FileNotFoundError, ValueError):
         logging.warning("Incorrect metadata_ingestion_records table, creating a new one...")
-        published_after = today - dateutil.relativedelta.relativedelta(months=1)
+        # published_after = today - dateutil.relativedelta.relativedelta(months=1)
+        published_after = None
         df_updated = df_new_record
 
     _output("metadata_ingestion_records", df_updated)
-    return str(published_after)
+    return published_after
 
 
 def run(ui_username, ui_password, ui_endpoints, ui_metrics, ui_tables):
@@ -199,7 +206,7 @@ def run(ui_username, ui_password, ui_endpoints, ui_metrics, ui_tables):
 
     for endpoint in ui_endpoints:
 
-        if endpoint == "reviews":
+        if endpoint == "reviews" and last_update_time:
             params["published_after"] = last_update_time
         else:
             if "published_after" in params:
@@ -217,8 +224,6 @@ def run(ui_username, ui_password, ui_endpoints, ui_metrics, ui_tables):
             continue
         for k in result_df_d:
             _output(k, result_df_d.get(k))
-        if endpoint == "reviews":
-            _produce_manifest("reviews", "id")
 
     metrics = _parse_ui_metrics(ui_metrics, account_id)
 
