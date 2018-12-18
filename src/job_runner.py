@@ -126,7 +126,7 @@ def _output(filename, data):
 def _get_last_update_time(tables):
     tracking_file_path = "/data/in/tables/metadata_ingestion_records.csv"
     now = datetime.datetime.today()
-    today = now.date()
+    # today = now.date()
 
     df_new_record = pd.DataFrame.from_dict(data={
         "ingest_time": [now],
