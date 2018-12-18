@@ -151,7 +151,7 @@ def _get_last_update_time(tables):
             raise ValueError
         published_after = df["review_published_before"].max()
         df_updated = df.append(df_new_record)
-        published_after = str(published_after)
+        published_after = str(published_after.date())
     except (FileNotFoundError, ValueError):
         logging.warning("Incorrect metadata_ingestion_records table, creating a new one...")
         # published_after = today - dateutil.relativedelta.relativedelta(months=1)
