@@ -201,7 +201,6 @@ def run(ui_username, ui_password, ui_endpoints, ui_metrics, ui_tables):
 
         if endpoint == "reviews":
             params["published_after"] = last_update_time
-            _produce_manifest("reviews", "id")
         else:
             if "published_after" in params:
                 del params["published_after"]
@@ -218,6 +217,8 @@ def run(ui_username, ui_password, ui_endpoints, ui_metrics, ui_tables):
             continue
         for k in result_df_d:
             _output(k, result_df_d.get(k))
+        if endpoint == "reviews":
+            _produce_manifest("reviews", "id")
 
     metrics = _parse_ui_metrics(ui_metrics, account_id)
 
