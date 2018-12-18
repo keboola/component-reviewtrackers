@@ -84,6 +84,26 @@ def _parse_ui_metrics(ui_metrics, account_id):
     return metrics
 
 
+def _produce_manifest(file_name, primary_key):
+
+    file = "/data/out/tables/" + str(file_name)+".csv.manifest"
+
+    manifest = {
+        "incremental": True,
+        "primary_key": primary_key
+    }
+
+    try:
+        with open(file, 'w') as file_out:
+            json.dump(manifest, file_out)
+            logging.info("Output manifest file produced.")
+    except Exception as e:
+        logging.error("Could not produce output file manifest.")
+        logging.error(e)
+
+    return
+
+
 def _output(filename, data):
 
     dest = DEFAULT_TABLE_DESTINATION + filename + ".csv"
@@ -181,6 +201,7 @@ def run(ui_username, ui_password, ui_endpoints, ui_metrics, ui_tables):
 
         if endpoint == "reviews":
             params["published_after"] = last_update_time
+            _produce_manifest("reviews", "id")
         else:
             if "published_after" in params:
                 del params["published_after"]
