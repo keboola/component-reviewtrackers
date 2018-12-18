@@ -44,8 +44,9 @@ class Component(KBCEnvHandler):
         password = params.get('#password')
         endpoints = params.get('endpoints')
         metrics = params.get('metrics')
+        tables = self.configuration.get_input_tables()
 
-        job_runner.run(username, password, endpoints, metrics)
+        job_runner.run(username, password, endpoints, metrics, tables)
 
 
 """

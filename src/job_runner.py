@@ -3,7 +3,9 @@ import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
 import json
+import logging
 import datetime
+import dateutil.relativedelta
 import warnings
 from service.api_client import request_endpoint
 from service.flattener import flatten
@@ -47,7 +49,7 @@ def _validate_date_format(date_text):
         datetime.datetime.strptime(date_text, '%Y-%m-%d')
         return True
     except ValueError:
-        print("Incorrect data format, should be YYYY-MM-DD")
+        logging.warning("Incorrect data format, should be YYYY-MM-DD")
         return False
 
 
@@ -96,11 +98,49 @@ def _output(filename, data):
         b.close()
 
 
-def run(ui_username, ui_password, ui_endpoints, ui_metrics):
+def _get_last_update_time(tables):
+    tracking_file_path = "/data/in/tables/metadata_ingestion_records.csv"
+    now = datetime.datetime.today()
+    today = now.date()
+
+    df_new_record = pd.DataFrame.from_dict(data={
+        "ingest_time": [now],
+        "review_published_before": [now]
+    })
+
+    try:
+        found_metafile = False
+        if len(tables) == 0:
+            raise FileNotFoundError
+        for t in tables:
+            if t["full_path"] == tracking_file_path:
+                found_metafile = True
+                break
+        if not found_metafile:
+            raise FileNotFoundError
+        df = pd.read_csv(tracking_file_path)
+        df["ingest_time"] = pd.to_datetime(df["ingest_time"])
+        df["review_published_before"] = pd.to_datetime(df["review_published_before"])
+        num_of_rows = df.shape[0]
+        if num_of_rows == 0:
+            raise ValueError
+        published_after = df["review_published_before"].max()
+        df_updated = df.append(df_new_record)
+    except (FileNotFoundError, ValueError):
+        logging.warning("Incorrect metadata_ingestion_records table, creating a new one...")
+        published_after = today - dateutil.relativedelta.relativedelta(months=1)
+        df_updated = df_new_record
+
+    _output("metadata_ingestion_records", df_updated)
+    return str(published_after)
+
+
+def run(ui_username, ui_password, ui_endpoints, ui_metrics, ui_tables):
     auth_res = _auth(username=ui_username, password=ui_password)
     account_id = auth_res.get('account_id')
     token = auth_res.get('token')
 
+    last_update_time = _get_last_update_time(tables=ui_tables)
     params = {
         'account_id': account_id
     }
@@ -139,13 +179,19 @@ def run(ui_username, ui_password, ui_endpoints, ui_metrics):
 
     for endpoint in ui_endpoints:
 
-        print("fetching endpoint {} ...".format(endpoint))
+        if endpoint == "reviews":
+            params["published_after"] = last_update_time
+        else:
+            if "published_after" in params:
+                del params["published_after"]
+
+        logging.info("fetching endpoint {} ...".format(endpoint))
         json_res = request_endpoint(ui_username, token, endpoint, params)
         if json_res == 404:
-            print("Endpoint [{}] not found, 404 Error".format(endpoint))
+            logging.warning("Endpoint [{}] not found, 404 Error".format(endpoint))
             continue
         file_name = _lookup(by='endpoint', by_val=endpoint, get='file_name')
-        print("preparing file {} ...".format(file_name))
+        logging.info("preparing file {} ...".format(file_name))
         result_df_d = flatten(json_res, file_name)
         if result_df_d is None:
             continue
@@ -161,12 +207,12 @@ def run(ui_username, ui_password, ui_endpoints, ui_metrics):
         endpoint = metric.get("endpoint")
         file_name = metric.get("file_name")
 
-        print("fetching metrics {} ...".format(endpoint))
+        logging.info("fetching metrics {} ...".format(endpoint))
         json_res = request_endpoint(ui_username, token, endpoint, params)
         if json_res == 404:
-            print("Metrics [{}] not found, 404 Error".format(endpoint))
+            logging.warning("Metrics [{}] not found, 404 Error".format(endpoint))
             continue
-        print("preparing file {} ...".format(file_name))
+        logging.info("preparing file {} ...".format(file_name))
         result_df_d = flatten(json_res, file_name)
         if result_df_d is None:
             continue
