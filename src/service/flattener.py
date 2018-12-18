@@ -38,7 +38,7 @@ def _flatten_metrics(json_obj, file_name):
     json_obj = json_obj[0]
     if file_name == 'metrics_overview':
         result_df = _flatten_metrics_overview(json_obj)
-    elif file_name == 'metrics_overview':
+    elif file_name == 'metrics_overview_monthly':
         result_df = _flatten_individual_metrics(json_obj, 'monthly')
     elif file_name == 'metrics_sources':
         result_df = _flatten_individual_metrics(json_obj, 'sources')
