@@ -62,7 +62,7 @@ def _parse_ui_metrics(ui_metrics, account_id):
             "endpoint": "metrics/{}/overview/monthly".format(account_id),
             "file_name": "metrics_overview_monthly"
         },
-        "Source": {
+        "Sources": {
             "endpoint": "metrics/{}/sources".format(account_id),
             "file_name": "metrics_sources"
         }
