@@ -5,7 +5,7 @@ from requests.auth import HTTPBasicAuth
 import json
 import logging
 import datetime
-import dateutil.relativedelta
+# import dateutil.relativedelta
 import warnings
 from service.api_client import request_endpoint
 from service.flattener import flatten
