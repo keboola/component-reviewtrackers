@@ -92,7 +92,7 @@ def _produce_manifest(file_name, primary_key):
         "incremental": True,
         "primary_key": [primary_key]
     }
-
+    logging.debug(manifest)
     try:
         with open(file, 'w') as file_out:
             json.dump(manifest, file_out)
