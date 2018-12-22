@@ -16,6 +16,8 @@ from keboola import docker
 import datetime
 from dateutil.relativedelta import relativedelta
 from _datetime import timedelta
+import logging_gelf.formatters
+import logging_gelf.handlers
 
 DEFAULT_DEL = ','
 DEFAULT_ENCLOSURE = '"'
@@ -98,12 +100,24 @@ class KBCEnvHandler:
     def set_default_logger(self, log_level='INFO'):  # noqa: E301
 
         hdl = logging.StreamHandler(sys.stdout)
-        logging.basicConfig(
-            level=log_level,
-            format='%(levelname)s - %(message)s',
-            handlers=[hdl])
 
-        logger = logging.getLogger()
+        logging.basicConfig(
+                #level=logging.INFO,
+                format='%(asctime)s - %(levelname)s - %(message)s',
+                datefmt="%Y-%m-%d %H:%M:%S"
+                )
+
+        logger = logging.getLogger('gelf')
+        logging_gelf_handler = logging_gelf.handlers.GELFTCPSocketHandler(
+            host=os.getenv('KBC_LOGGER_ADDR'),
+            port=int(os.getenv('KBC_LOGGER_PORT'))
+            )
+        logging_gelf_handler.setFormatter(logging_gelf.formatters.GELFFormatter(null_character=True))
+        logger.addHandler(logging_gelf_handler)
+
+        # removes the initial stdout logging
+        logger.removeHandler(logger.handlers[0])
+        
         return logger
 
     def get_state_file(self):
