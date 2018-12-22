@@ -2,22 +2,21 @@
 # KBC Env handler
 # ==============================================================================
 
-
 # ============================ Import libraries ==========================
-import logging
-import json
-import os
 import csv
-import pytz
+import datetime
+import json
+import logging
 import math
+import os
 import sys
 from collections import Counter
-from keboola import docker
-import datetime
+import pytz
 from dateutil.relativedelta import relativedelta
-from _datetime import timedelta
 import logging_gelf.formatters
 import logging_gelf.handlers
+from _datetime import timedelta
+from keboola import docker
 
 DEFAULT_DEL = ','
 DEFAULT_ENCLOSURE = '"'
@@ -99,10 +98,10 @@ class KBCEnvHandler:
 
     def set_default_logger(self, log_level='INFO'):  # noqa: E301
 
-        hdl = logging.StreamHandler(sys.stdout)
+        #hdl = logging.StreamHandler(sys.stdout)
 
         logging.basicConfig(
-                #level=logging.INFO,
+                level=logging.INFO,
                 format='%(asctime)s - %(levelname)s - %(message)s',
                 datefmt="%Y-%m-%d %H:%M:%S"
                 )
@@ -117,7 +116,7 @@ class KBCEnvHandler:
 
         # removes the initial stdout logging
         logger.removeHandler(logger.handlers[0])
-        
+
         return logger
 
     def get_state_file(self):

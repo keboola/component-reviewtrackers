@@ -1,12 +1,12 @@
+# import dateutil.relativedelta
+import datetime
+import json
+import logging
 import os
+import warnings
 import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
-import json
-import logging
-import datetime
-# import dateutil.relativedelta
-import warnings
 from service.api_client import request_endpoint
 from service.flattener import flatten
 
@@ -85,6 +85,9 @@ def _parse_ui_metrics(ui_metrics, account_id):
 
 
 def _produce_manifest(file_name, primary_key):
+    """
+    Create manifest file
+    """
 
     file = "/data/out/tables/" + str(file_name)+".csv.manifest"
 
@@ -101,11 +104,8 @@ def _produce_manifest(file_name, primary_key):
         logging.error("Could not produce output file manifest.")
         logging.error(e)
 
-    return
-
 
 def _output(filename, data):
-
     dest = DEFAULT_TABLE_DESTINATION + filename + ".csv"
 
     if os.path.isfile(dest):
