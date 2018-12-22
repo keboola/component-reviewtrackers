@@ -9,7 +9,6 @@ import json
 import logging
 import math
 import os
-import sys
 from collections import Counter
 import pytz
 from dateutil.relativedelta import relativedelta
@@ -97,8 +96,6 @@ class KBCEnvHandler:
 # ================================= Logging ==============================
 
     def set_default_logger(self, log_level='INFO'):  # noqa: E301
-
-        #hdl = logging.StreamHandler(sys.stdout)
 
         logging.basicConfig(
                 level=logging.INFO,
