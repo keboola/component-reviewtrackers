@@ -9,11 +9,10 @@ import json
 import logging
 import math
 import os
+import sys
 from collections import Counter
 import pytz
 from dateutil.relativedelta import relativedelta
-import logging_gelf.formatters
-import logging_gelf.handlers
 from _datetime import timedelta
 from keboola import docker
 
@@ -96,6 +95,11 @@ class KBCEnvHandler:
 # ================================= Logging ==============================
 
     def set_default_logger(self, log_level='INFO'):  # noqa: E301
+        """
+        # This is a GELF logging:
+
+        import logging_gelf.formatters
+        import logging_gelf.handlers
 
         logging.basicConfig(
                 level=logging.INFO,
@@ -113,6 +117,15 @@ class KBCEnvHandler:
 
         # removes the initial stdout logging
         logger.removeHandler(logger.handlers[0])
+        """
+
+        hdl = logging.StreamHandler(sys.stdout)
+        logging.basicConfig(
+            level=log_level,
+            format='%(levelname)s - %(message)s',
+            handlers=[hdl])
+        
+        logger = logging.getLogger()
 
         return logger
 
