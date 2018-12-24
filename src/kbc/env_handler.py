@@ -124,7 +124,6 @@ class KBCEnvHandler:
             level=log_level,
             format='%(levelname)s - %(message)s',
             handlers=[hdl])
-        
         logger = logging.getLogger()
 
         return logger
