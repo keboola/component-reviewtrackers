@@ -45,7 +45,7 @@ def request_endpoint(username, token, endpoint, params):
             entities += entities_curr_page
             current_page_num = int(res.get("_page"))
             logging.info("Current Page: [{}]".format(current_page_num))
-            logging.info("Current URL: [{}]".format(BASE_URL + endpoint))
+            logging.info("Entities on the page: [{}]".format(len(entities_curr_page)))
 
             params["page"] = current_page_num + 1
             res = requests.get(url=BASE_URL + endpoint, headers=headers, params=params)
