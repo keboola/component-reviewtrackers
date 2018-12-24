@@ -1,6 +1,7 @@
 import requests
 import base64
 import json
+import logging
 
 
 BASE_URL = "https://api.reviewtrackers.com/"
@@ -34,12 +35,15 @@ def request_endpoint(username, token, endpoint, params):
         entities += res.get("_embedded").get(endpoint)
         total_pages = res.get('_total_pages')
         current_page_num = int(res.get('_page'))
+        logging.info("Total Pages: [{}]".format(total_pages))
+        logging.info("Current Page: [{}]".format(current_page_num))
 
         while current_page_num < total_pages:
 
             entities_curr_page = res.get("_embedded").get(endpoint)
             entities += entities_curr_page
             current_page_num = int(res.get("_page"))
+            logging.info("Current Page: [{}]".format(current_page_num))
 
             params["page"] = current_page_num + 1
             res = requests.get(url=BASE_URL + endpoint, headers=headers, params=params)
