@@ -227,6 +227,9 @@ def run(ui_username, ui_password, ui_endpoints, ui_metrics, ui_tables):
 
     metrics = _parse_ui_metrics(ui_metrics, account_id)
 
+
+    ### Capturing total requests
+    n_th = 0
     for metric in metrics:
 
         params["month_before"] = metric.get("month_before")
@@ -235,11 +238,12 @@ def run(ui_username, ui_password, ui_endpoints, ui_metrics, ui_tables):
         file_name = metric.get("file_name")
 
         logging.info("fetching metrics {} ...".format(endpoint))
-        json_res = request_endpoint(ui_username, token, endpoint, params)
+        json_res, n_th = request_endpoint(ui_username, token, endpoint, params, n_th)
         if json_res == 404:
             logging.warning("Metrics [{}] not found, 404 Error".format(endpoint))
             continue
         logging.info("preparing file {} ...".format(file_name))
+
         result_df_d = flatten(json_res, file_name)
         if result_df_d is None:
             continue
