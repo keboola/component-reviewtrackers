@@ -227,8 +227,7 @@ def run(ui_username, ui_password, ui_endpoints, ui_metrics, ui_tables):
 
     metrics = _parse_ui_metrics(ui_metrics, account_id)
 
-
-    ### Capturing total requests
+    # Capturing total requests
     n_th = 0
     for metric in metrics:
 
