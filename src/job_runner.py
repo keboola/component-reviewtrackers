@@ -124,6 +124,9 @@ def _output(filename, data):
 
 
 def _get_last_update_time(tables):
+    """
+    Getting the last updated time
+    """
     tracking_file_path = "/data/in/tables/metadata_ingestion_records.csv"
     now = datetime.datetime.today()
     # today = now.date()
