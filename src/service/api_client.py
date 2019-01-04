@@ -44,7 +44,7 @@ def request_endpoint(username, token, endpoint, params, n_th):
             entities_curr_page = res.get("_embedded").get(endpoint)
             entities += entities_curr_page
             current_page_num = int(res.get("_page"))
-            logging.info("Current Page: [{}]".format(current_page_num))
+            logging.info("Current Page: [{0}] @ [{1}]".format(current_page_num, endpoint))
             # logging.info("Entities on the page: [{}]".format(len(entities_curr_page)))
 
             params["page"] = current_page_num + 1

@@ -1,4 +1,5 @@
 import pandas as pd
+import sys
 
 
 def _lookup(by, by_val, get):
@@ -75,6 +76,7 @@ def _flatten_entity(json_obj, file_name):
 
     df = pd.DataFrame.from_records([result_d])
     df_d[file_name] = df
+
     return df_d
 
 

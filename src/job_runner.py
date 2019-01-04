@@ -219,7 +219,7 @@ def run(ui_username, ui_password, ui_endpoints, ui_metrics, ui_tables):
                 del params["published_after"]
 
         logging.info("fetching endpoint {} ...".format(endpoint))
-        json_res = request_endpoint(ui_username, token, endpoint, params, n_th)
+        json_res, n_th = request_endpoint(ui_username, token, endpoint, params, n_th)
         if json_res == 404:
             logging.warning("Endpoint [{}] not found, 404 Error".format(endpoint))
             continue

@@ -14,8 +14,7 @@ MANDATORY_PARS = [
     'metrics'
 ]
 
-APP_VERSION = '0.0.25'
-
+APP_VERSION = '0.0.26'
 
 class Component(KBCEnvHandler):
 

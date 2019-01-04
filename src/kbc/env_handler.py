@@ -33,6 +33,8 @@ class KBCEnvHandler:
         self.cfg_params = self.configuration.get_parameters()
         self.tables_out_path = os.path.join(data_path, 'out', 'tables')
         self.tables_in_path = os.path.join(data_path, 'in', 'tables')
+        # self.tables_out_path = "out/tables/"
+        # self.tables_in_path = "in/tables/"
 
         self._mandatory_params = mandatory_params
 
