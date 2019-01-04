@@ -69,7 +69,6 @@ def request_endpoint(username, token, endpoint, params, n_th):
             current_page_num = int(res.get('_page'))
             logging.info("Current Page: [{0}] @ [{1}]".format(current_page_num, endpoint))
 
-
         # Number of requests
         n_th = n_th + int(total_pages)
         logging.info("Total Requests: [{0}] @ [{1}]".format(n_th, endpoint))
