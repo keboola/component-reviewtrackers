@@ -22,6 +22,7 @@ def _build_headers(username, token):
 def request_endpoint(username, token, endpoint, params, n_th):
     entities = []
     headers = _build_headers(username, token)
+    params["per_page"] = 250
 
     res = requests.get(url=BASE_URL + endpoint, headers=headers, params=params)
     if res.status_code == 404:
