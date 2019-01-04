@@ -16,6 +16,7 @@ MANDATORY_PARS = [
 
 APP_VERSION = '0.0.26'
 
+
 class Component(KBCEnvHandler):
 
     def __init__(self, debug=False):
