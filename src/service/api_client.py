@@ -34,6 +34,7 @@ def _write_state(data_in):
     """
 
     logging.info("Outputting State file...")
+    logging.info("Output State: {0}".format(data_in))
     with open("/data/out/state.json", "w") as f:
             json.dump(data_in, f)
     return
@@ -118,7 +119,6 @@ def request_endpoint(username, token, endpoint, params, n_th):
             logging.info("Next Url: ...{0}".format(next_url[-60:]))
 
             res = requests.get(url=next_url, headers=headers, params=params)
-            print(params)
             res = json.loads(res.text)
             # current_page_num = int(res.get('_page'))
             # logging.info(res["_page"])
