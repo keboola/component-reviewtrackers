@@ -63,11 +63,15 @@ def request_endpoint(username, token, endpoint, params, n_th):
         # if "next" in res["_links"]:
         while "next" in res["_links"]:
             next_url = res["_links"]["next"]["href"]
+            logging.info("Next Url: ...{0}".format(next_url[-60:]))
 
             res = requests.get(url=next_url, headers=headers, params=params)
             res = json.loads(res.text)
             current_page_num = int(res.get('_page'))
             logging.info("Current Page: [{0}] @ [{1}]".format(current_page_num, endpoint))
+
+            entities_curr_page = res.get("_embedded").get(endpoint)
+            entities += entities_curr_page
 
         # Number of requests
         n_th = n_th + int(total_pages)
