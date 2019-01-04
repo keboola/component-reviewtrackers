@@ -1,5 +1,4 @@
 import pandas as pd
-import sys
 
 
 def _lookup(by, by_val, get):
