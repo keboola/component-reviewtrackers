@@ -114,7 +114,7 @@ def request_endpoint(username, token, endpoint, params, n_th):
 
         # next_url = res.get("_links").get("next").get("href")
         # if "next" in res["_links"]:
-        while "next" in res["_links"] and ex_itr < 1:
+        while "next" in res["_links"] and ex_itr < 100:
             next_url = res["_links"]["next"]["href"]
             logging.info("Next Url: ...{0}".format(next_url[-60:]))
 
