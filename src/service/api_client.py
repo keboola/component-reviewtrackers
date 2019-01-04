@@ -16,13 +16,12 @@ def _read_state():
     """
 
     if os.path.isfile("/data/in/state.json"):
-        ### Fetching refresh token from state file
+        # Fetching refresh token from state file
         logging.info("Fetched State file...")
         with open("/data/in/state.json", 'r') as f:
             temp = json.load(f)
 
         logging.info("Extractor State: {0}".format(temp))
-    
     else:
         temp = {}
 
@@ -37,7 +36,6 @@ def _write_state(data_in):
     logging.info("Outputting State file...")
     with open("/data/out/state.json", "w") as f:
             json.dump(data_in, f)
-    
     return
 
 
@@ -122,7 +120,7 @@ def request_endpoint(username, token, endpoint, params, n_th):
             res = requests.get(url=next_url, headers=headers, params=params)
             print(params)
             res = json.loads(res.text)
-            current_page_num = int(res.get('_page'))
+            # current_page_num = int(res.get('_page'))
             # logging.info(res["_page"])
             logging.info("Current Page: [{0}] @ [{1}]".format(starting_page, endpoint))
 
@@ -137,7 +135,7 @@ def request_endpoint(username, token, endpoint, params, n_th):
             "last_page_fetched": starting_page - 1
         }
         state_file[endpoint] = endpoint_state
-        _write_state(state_file)   
+        _write_state(state_file)
 
         # Number of requests
         n_th = n_th + int(total_pages)
