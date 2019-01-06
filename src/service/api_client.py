@@ -15,13 +15,20 @@ def _read_state():
     Return the last page Ex requested
     """
 
+    if os.path.isfile("/data/out/state.json"):
+        # check if current state file has been udpated
+        logging.info("Fetched State file...")
+        with open("/data/out/state.json", 'r') as f:
+            temp = json.load(f)
+        logging.info("Extractor State: {0}".format(temp))
+
     if os.path.isfile("/data/in/state.json"):
         # Fetching refresh token from state file
         logging.info("Fetched State file...")
         with open("/data/in/state.json", 'r') as f:
             temp = json.load(f)
-
         logging.info("Extractor State: {0}".format(temp))
+
     else:
         temp = {}
 
