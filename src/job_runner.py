@@ -119,8 +119,9 @@ def _output(filename, data):
 
     if "reviews_" in filename:
         _produce_manifest(filename, "reviews_id")
-    elif filename == "reviews":
-        _produce_manifest("reviews", "id")
+    elif filename in ["reviews", "locations", "responses"]:
+        # _produce_manifest("reviews", "id")
+        _produce_manifest(filename, "id")
 
 
 def _get_last_update_time(tables):
@@ -231,6 +232,8 @@ def run(ui_username, ui_password, ui_endpoints, ui_metrics, ui_tables):
         for k in result_df_d:
             _output(k, result_df_d.get(k))
 
+    """
+    DISABLED
     metrics = _parse_ui_metrics(ui_metrics, account_id)
 
     for metric in metrics:
@@ -252,3 +255,4 @@ def run(ui_username, ui_password, ui_endpoints, ui_metrics, ui_tables):
             continue
         for k in result_df_d:
             _output(k, result_df_d.get(k))
+    """

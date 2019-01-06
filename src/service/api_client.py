@@ -91,21 +91,6 @@ def request_endpoint(username, token, endpoint, params, n_th):
         # logging.info("Total Pages: [{}]".format(total_pages))
         # logging.info("Current Page: [{0}] @ [{1}]".format(current_page_num, endpoint))
 
-        """
-        while current_page_num < total_pages:
-
-            entities_curr_page = res.get("_embedded").get(endpoint)
-            entities += entities_curr_page
-            current_page_num = int(res.get("_page"))
-            logging.info("Current Page: [{0}] @ [{1}]".format(current_page_num, endpoint))
-            # logging.info("Entities on the page: [{}]".format(len(entities_curr_page)))
-
-            params["page"] = current_page_num + 1
-            res = requests.get(url=BASE_URL + endpoint, headers=headers, params=params)
-            res = json.loads(res.text)
-        """
-        # while current_page_num < total_pages + 1:
-
         # First page processing
         logging.info("Current Page: [{0}] @ [{1}]".format(starting_page, endpoint))
         entities_curr_page = res.get("_embedded").get(endpoint)
