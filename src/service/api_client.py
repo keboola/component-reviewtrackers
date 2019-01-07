@@ -22,7 +22,7 @@ def _read_state():
             temp = json.load(f)
         logging.info("Extractor State: {0}".format(temp))
 
-    if os.path.isfile("/data/in/state.json"):
+    elif os.path.isfile("/data/in/state.json"):
         # Fetching refresh token from state file
         logging.info("Fetched State file...")
         with open("/data/in/state.json", 'r') as f:
