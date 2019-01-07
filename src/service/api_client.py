@@ -124,7 +124,8 @@ def request_endpoint(username, token, endpoint, params, n_th):
 
         # Update State file parameters
         endpoint_state = {
-            "last_page_fetched": starting_page - 1
+            "last_page_fetched": starting_page - 1,
+            "total_pages": total_pages
         }
         state_file[endpoint] = endpoint_state
         _write_state(state_file)
