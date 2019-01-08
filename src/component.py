@@ -13,7 +13,7 @@ MANDATORY_PARS = [
     'endpoints'
 ]
 
-APP_VERSION = '0.0.34'
+APP_VERSION = '0.0.35'
 
 
 class Component(KBCEnvHandler):
