@@ -216,7 +216,7 @@ def run(ui_username, ui_password, ui_endpoints, ui_clear_state, ui_tables):
         ex_state = {}
 
     for endpoint in ui_endpoints:
-        
+
         # if endpoint == "reviews" and last_update_time:
         #     params["published_after"] = last_update_time
         # else:
@@ -230,7 +230,7 @@ def run(ui_username, ui_password, ui_endpoints, ui_clear_state, ui_tables):
             logging.warning("Endpoint [{}] not found, 404 Error".format(endpoint))
             continue
 
-        # State File Content after 1 Endpoint extraction    
+        # State File Content after 1 Endpoint extraction
         logging.info("Extractor State: {0}".format(ex_state))
 
         if "reviews_" in file_name:

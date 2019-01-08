@@ -2,9 +2,8 @@ import requests
 import base64
 import json
 import logging
-import os
 import copy
-from service.flattener import flatten
+# from service.flattener import flatten
 from service.parser import parse
 
 
