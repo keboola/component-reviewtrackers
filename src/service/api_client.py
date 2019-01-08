@@ -85,12 +85,12 @@ def _parse(json_res, file_name):
     return
 
 
-def request_endpoint(username, token, endpoint, file_name, params, n_th):
+def request_endpoint(username, token, state_file, endpoint, file_name, params):
     entities = []
     headers = _build_headers(username, token)
     params["per_page"] = 250
     # State file parameters
-    state_file = _read_state()
+    # state_file = _read_state()
 
     res = requests.get(url=BASE_URL + endpoint, headers=headers, params=params)
     if res.status_code == 404:
@@ -138,7 +138,7 @@ def request_endpoint(username, token, endpoint, file_name, params, n_th):
 
             res = requests.get(url=next_url, headers=headers, params=params)
             res = json.loads(res.text)
-            logging.info("Current Page: [{0}] @ [{1}]".format(starting_page, endpoint))
+            logging.info("Current Page: [{0}] @ [{1}] - Parsing".format(starting_page, endpoint))
 
             entities_curr_page = res.get("_embedded").get(endpoint)
             entities += entities_curr_page
@@ -155,10 +155,10 @@ def request_endpoint(username, token, endpoint, file_name, params, n_th):
             "total_pages": total_pages
         }
         state_file[endpoint] = endpoint_state
-        _write_state(state_file)
+        #_write_state(state_file)
 
         # Number of requests
-        n_th = n_th + int(total_pages)
-        logging.info("Total Requests Required: [{0}] @ [{1}]".format(n_th, endpoint))
+        # n_th = n_th + int(total_pages)
+        # logging.info("Total Requests Required: [{0}] @ [{1}]".format(n_th, endpoint))
 
-    return entities, n_th
+    return entities, state_file

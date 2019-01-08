@@ -4,7 +4,8 @@
     "required":[
         "username",
         "#password",
-        "endpoints"
+        "endpoints",
+        "clear_state"
     ],
     "properties":{
         "username":{
@@ -37,6 +38,17 @@
                             "reviews"
                 ]
             }
+        },
+        "clear_state":{
+            "propertyOrder": 400,
+            "title": "Clear State",
+            "type": "string",
+            "default": "false",
+            "enum": [
+                "true",
+                "false"
+            ],
+            "description": "Enabling 'Clear State' will wipe out the current extractor state. Every endpoint will be starting from 1st page."
         }
     }
 }

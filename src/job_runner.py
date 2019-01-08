@@ -10,6 +10,7 @@ from requests.auth import HTTPBasicAuth
 from service.api_client import request_endpoint
 # from service.flattener import flatten
 
+
 DEFAULT_TABLE_SOURCE = "/data/in/tables/"
 DEFAULT_TABLE_DESTINATION = "/data/out/tables/"
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -53,6 +54,36 @@ def _auth(username, password):
         'account_id': auth_res.get('account_id'),
         'token': auth_res.get('token')
     }
+
+
+def _read_state():
+    """
+    Return the last page Ex requested
+    """
+
+    if os.path.isfile("/data/in/state.json"):
+        # Fetching refresh token from state file
+        logging.info("Fetched State file...")
+        with open("/data/in/state.json", 'r') as f:
+            temp = json.load(f)
+        logging.info("Extractor State: {0}".format(temp))
+
+    else:
+        temp = {}
+
+    return temp
+
+
+def _write_state(data_in):
+    """
+    Updating state file
+    """
+
+    logging.info("Outputting State file...")
+    logging.info("Output State: {0}".format(data_in))
+    with open("/data/out/state.json", "w") as f:
+            json.dump(data_in, f)
+    return
 
 
 def _lookup(by, by_val, get):
@@ -187,19 +218,24 @@ def _get_last_update_time(tables):
     return published_after
 
 
-def run(ui_username, ui_password, ui_endpoints, ui_tables):
-    # def run(ui_username, ui_password, ui_endpoints, ui_metrics, ui_tables):
+def run(ui_username, ui_password, ui_endpoints, ui_clear_state, ui_tables):
+
     auth_res = _auth(username=ui_username, password=ui_password)
     account_id = auth_res.get('account_id')
     token = auth_res.get('token')
-
-    last_update_time = _get_last_update_time(tables=ui_tables)
     params = {
         'account_id': account_id
     }
 
-    # Capturing total requests
-    n_th = 0
+    last_update_time = _get_last_update_time(tables=ui_tables)
+
+    # State File fetch
+    logging.info("Clear State: {0}".format(ui_clear_state))
+    if ui_clear_state == "false":
+        ex_state = _read_state()
+    else:
+        logging.info("Clearning State File...")
+        ex_state = {}
 
     for endpoint in ui_endpoints:
 
@@ -211,11 +247,12 @@ def run(ui_username, ui_password, ui_endpoints, ui_tables):
 
         logging.info("fetching endpoint {} ...".format(endpoint))
         file_name = _lookup(by='endpoint', by_val=endpoint, get='file_name')
-        json_res, n_th = request_endpoint(ui_username, token, endpoint, file_name, params, n_th)
+        json_res, ex_state = request_endpoint(ui_username, token, ex_state, endpoint, file_name, params)
         if json_res == 404:
             logging.warning("Endpoint [{}] not found, 404 Error".format(endpoint))
             continue
         # logging.info("preparing file {} ...".format(file_name))
+        logging.info("Extractor State: {0}".format(ex_state))
         """
         result_df_d = flatten(json_res, file_name)
         if result_df_d is None:
@@ -228,6 +265,10 @@ def run(ui_username, ui_password, ui_endpoints, ui_tables):
         elif file_name in ["reviews", "locations", "responses"]:
             # _produce_manifest("reviews", "id")
             _produce_manifest(file_name, "id")
+    
+    # State File Out
+    _write_state(ex_state)
+
     """
     DISABLED
     metrics = _parse_ui_metrics(ui_metrics, account_id)
