@@ -8,7 +8,7 @@ import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
 from service.api_client import request_endpoint
-from service.flattener import flatten
+# from service.flattener import flatten
 
 DEFAULT_TABLE_SOURCE = "/data/in/tables/"
 DEFAULT_TABLE_DESTINATION = "/data/out/tables/"
