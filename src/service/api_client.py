@@ -4,10 +4,26 @@ import json
 import logging
 import os
 import copy
+from service.flattener import flatten
 
 
 BASE_URL = "https://api.reviewtrackers.com/"
+DEFAULT_TABLE_SOURCE = "/data/in/tables/"
+DEFAULT_TABLE_DESTINATION = "/data/out/tables/"
 # BASE_URL = "https://api-gateway.reviewtrackers.com/"
+
+
+def _output(filename, data):
+    dest = DEFAULT_TABLE_DESTINATION + filename + ".csv"
+
+    if os.path.isfile(dest):
+        with open(dest, 'a') as b:
+            data.to_csv(b, index=False, header=False)
+        b.close()
+    else:
+        with open(dest, 'w+') as b:
+            data.to_csv(b, index=False, header=True)
+        b.close()
 
 
 def _read_state():
@@ -58,7 +74,7 @@ def _build_headers(username, token):
     }
 
 
-def request_endpoint(username, token, endpoint, params, n_th):
+def request_endpoint(username, token, endpoint, file_name, params, n_th):
     entities = []
     headers = _build_headers(username, token)
     params["per_page"] = 250
@@ -90,34 +106,32 @@ def request_endpoint(username, token, endpoint, params, n_th):
         # collect first page objects
         res = requests.get(url=BASE_URL + endpoint, headers=headers, params=first_request_params)
         res = json.loads(res.text)
-        entities += res.get("_embedded").get(endpoint)
+        # entities += res.get("_embedded").get(endpoint)
+        # entity = res["_embedded"][endpoint]
         total_pages = int(res.get('_total_pages'))
         # current_page_num = int(res.get('_page'))
         logging.info("Endpoint: [{0}]; Total Pages: [{1}]".format(endpoint, total_pages))
 
-        # logging.info("Total Pages: [{}]".format(total_pages))
-        # logging.info("Current Page: [{0}] @ [{1}]".format(current_page_num, endpoint))
-
         # First page processing
-        logging.info("Current Page: [{0}] @ [{1}]".format(starting_page, endpoint))
+        logging.info("Current Page: [{0}] @ [{1}] - Parsing".format(starting_page, endpoint))
         entities_curr_page = res.get("_embedded").get(endpoint)
         entities += entities_curr_page
+        # _parse([entities_curr_page], file_name)
+        _parse(entities_curr_page, file_name)
         starting_page += 1
 
-        # next_url = res.get("_links").get("next").get("href")
-        # if "next" in res["_links"]:
         while "next" in res["_links"] and ex_itr < 100:
             next_url = res["_links"]["next"]["href"]
             logging.info("Next Url: ...{0}".format(next_url[-60:]))
 
             res = requests.get(url=next_url, headers=headers, params=params)
             res = json.loads(res.text)
-            # current_page_num = int(res.get('_page'))
-            # logging.info(res["_page"])
             logging.info("Current Page: [{0}] @ [{1}]".format(starting_page, endpoint))
 
             entities_curr_page = res.get("_embedded").get(endpoint)
             entities += entities_curr_page
+            # _parse([entities_curr_page], file_name)
+            _parse(entities_curr_page, file_name)
 
             ex_itr += 1
             starting_page += 1
@@ -135,3 +149,13 @@ def request_endpoint(username, token, endpoint, params, n_th):
         logging.info("Total Requests Required: [{0}] @ [{1}]".format(n_th, endpoint))
 
     return entities, n_th
+
+
+def _parse(json_res, file_name):
+    result_df_d = flatten(json_res, file_name)
+    if result_df_d is None:
+        pass
+    for k in result_df_d:
+        _output(k, result_df_d.get(k))
+
+    return
