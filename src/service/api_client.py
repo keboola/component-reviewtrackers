@@ -6,7 +6,6 @@ import os
 import copy
 from service.flattener import flatten
 from service.parser import parse
-import sys
 
 
 BASE_URL = "https://api.reviewtrackers.com/"

@@ -24,7 +24,7 @@ reviews_header = [
     "extra_text",
     "id",
     "location_id",
-    "metadata_blank", # In
+    "metadata_blank",
     "name",
     "permalink",
     "published_at",
@@ -32,7 +32,7 @@ reviews_header = [
     "respondable",
     "source_code",
     "source_name",
-    "url_metadata_google_serp" # In
+    "url_metadata_google_serp"
 ]
 
 

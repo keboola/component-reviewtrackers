@@ -1,7 +1,5 @@
 import os
 import pandas as pd
-import json
-import sys
 
 
 DEFAULT_TABLE_SOURCE = "/data/in/tables/"
@@ -17,7 +15,7 @@ review_header = [
         "extra_text",
         "id",
         "location_id",
-        "metadata_blank", # In
+        "metadata_blank",
         "name",
         "permalink",
         "published_at",
@@ -25,7 +23,7 @@ review_header = [
         "respondable",
         "source_code",
         "source_name",
-        "url_metadata_google_serp" # In
+        "url_metadata_google_serp"
     ]
 location_header = [
         "account_id",
@@ -42,8 +40,8 @@ location_header = [
         "id",
         "latitude",
         "longitude",
-        "metadata_dealer_id", # in
-        "metadata_import_id", # in
+        "metadata_dealer_id",
+        "metadata_import_id",
         "mute_issues",
         "name",
         "oid",
@@ -155,7 +153,7 @@ def parse(data_in, endpoint):
     if endpoint == "reviews":
         data_out = _review_parse(data_in)
         _output(endpoint, review_header, data_out)
-    elif endpoint == "locations": 
+    elif endpoint == "locations":
         data_out = _location_parse(data_in)
         _output(endpoint, location_header, data_out)
     elif endpoint == "responses":
