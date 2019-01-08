@@ -155,7 +155,7 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
             "total_pages": total_pages
         }
         state_file[endpoint] = endpoint_state
-        #_write_state(state_file)
+        # _write_state(state_file)
 
         # Number of requests
         # n_th = n_th + int(total_pages)
