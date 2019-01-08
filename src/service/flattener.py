@@ -75,6 +75,7 @@ def _flatten_entity(json_obj, file_name):
 
     df = pd.DataFrame.from_records([result_d])
     df_d[file_name] = df
+
     return df_d
 
 
