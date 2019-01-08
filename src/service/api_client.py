@@ -5,6 +5,8 @@ import logging
 import os
 import copy
 from service.flattener import flatten
+from service.parser import parse
+import sys
 
 
 BASE_URL = "https://api.reviewtrackers.com/"
@@ -74,6 +76,16 @@ def _build_headers(username, token):
     }
 
 
+def _parse(json_res, file_name):
+    result_df_d = flatten(json_res, file_name)
+    if result_df_d is None:
+        pass
+    for k in result_df_d:
+        _output(k, result_df_d.get(k))
+
+    return
+
+
 def request_endpoint(username, token, endpoint, file_name, params, n_th):
     entities = []
     headers = _build_headers(username, token)
@@ -117,7 +129,8 @@ def request_endpoint(username, token, endpoint, file_name, params, n_th):
         entities_curr_page = res.get("_embedded").get(endpoint)
         entities += entities_curr_page
         # _parse([entities_curr_page], file_name)
-        _parse(entities_curr_page, file_name)
+        # _parse(entities_curr_page, file_name)
+        parse(entities_curr_page, file_name)
         starting_page += 1
 
         while "next" in res["_links"] and ex_itr < 100:
@@ -131,7 +144,8 @@ def request_endpoint(username, token, endpoint, file_name, params, n_th):
             entities_curr_page = res.get("_embedded").get(endpoint)
             entities += entities_curr_page
             # _parse([entities_curr_page], file_name)
-            _parse(entities_curr_page, file_name)
+            # _parse(entities_curr_page, file_name)
+            parse(entities_curr_page, file_name)
 
             ex_itr += 1
             starting_page += 1
@@ -149,13 +163,3 @@ def request_endpoint(username, token, endpoint, file_name, params, n_th):
         logging.info("Total Requests Required: [{0}] @ [{1}]".format(n_th, endpoint))
 
     return entities, n_th
-
-
-def _parse(json_res, file_name):
-    result_df_d = flatten(json_res, file_name)
-    if result_df_d is None:
-        pass
-    for k in result_df_d:
-        _output(k, result_df_d.get(k))
-
-    return

@@ -14,6 +14,27 @@ DEFAULT_TABLE_SOURCE = "/data/in/tables/"
 DEFAULT_TABLE_DESTINATION = "/data/out/tables/"
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
+# Column headers
+reviews_header = [
+    "account_id",
+    "author",
+    "business_response_url",
+    "content",
+    "created_at",
+    "extra_text",
+    "id",
+    "location_id",
+    "metadata_blank", # In
+    "name",
+    "permalink",
+    "published_at",
+    "rating",
+    "respondable",
+    "source_code",
+    "source_name",
+    "url_metadata_google_serp" # In
+]
+
 
 def _auth(username, password):
     url = 'https://api-gateway.reviewtrackers.com/auth'
@@ -99,7 +120,7 @@ def _produce_manifest(file_name, primary_key):
     try:
         with open(file, 'w') as file_out:
             json.dump(manifest, file_out)
-            logging.info("Output manifest file produced.")
+            logging.info("Output manifest file [{0}] produced.".format(file_name))
     except Exception as e:
         logging.error("Could not produce output file manifest.")
         logging.error(e)
@@ -176,40 +197,6 @@ def run(ui_username, ui_password, ui_endpoints, ui_tables):
     params = {
         'account_id': account_id
     }
-    """
-    NOT NEEDED
-    if "All" in ui_endpoints:
-        ui_endpoints = [
-            "accounts",
-            "alert_frequencies",
-            "alerts",
-            "alert_types",
-            "campaigns",
-            "competitors",
-            "contacts",
-            "groups",
-            "items",
-            "layouts",
-            "locations",
-            "notes",
-            "profiles",
-            "permissions",
-            "request_pages",
-            "requests",
-            "request_types",
-            "responses",
-            "reviews",
-            "review_status_labels",
-            "single_sign_ons",
-            "sources",
-            "templates",
-            "template_tags",
-            "urls",
-            "users",
-            "user_types",
-            "whitelabels"
-        ]
-    """
 
     # Capturing total requests
     n_th = 0

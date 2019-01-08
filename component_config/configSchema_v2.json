@@ -1,0 +1,42 @@
+{
+    "title": "Parameters",
+    "type": "object",
+    "required":[
+        "username",
+        "#password",
+        "endpoints"
+    ],
+    "properties":{
+        "username":{
+            "propertyOrder": 100,
+            "title": "username",
+            "type": "string",
+            "minLength": 4
+        },
+        "#password":{
+            "propertyOrder": 200,
+            "title": "password",
+            "format": "password",
+            "type": "string",
+            "minLength": 1
+        },
+        "endpoints":{
+            "propertyOrder": 300,
+            "title": "Data Endpoints",
+            "format": "select",
+            "uniqueItems": false,
+            "type": "array",
+            "description": "Select <b>All</b> or the endpoints you want to extract",
+            "default": "locations",
+            "items": {
+                "default": "All",
+                "type": "string",
+                "enum": [
+                            "locations",
+                            "responses",
+                            "reviews"
+                ]
+            }
+        }
+    }
+}
