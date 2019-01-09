@@ -61,6 +61,7 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
         logging.info("Current Page: [{0}] @ [{1}] - Parsing".format(starting_page, endpoint))
         entities_curr_page = res.get("_embedded").get(endpoint)
         entities += entities_curr_page
+        print(entities_curr_page)
         parse(entities_curr_page, file_name)
         starting_page += 1
 
