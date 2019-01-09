@@ -77,7 +77,7 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
             """TEST"""
             if int(starting_page) == 629:
                 logging.info(res)
-                raise Exception ("Pausing @ PAGE 629")
+                raise Exception("Pausing @ PAGE 629")
             """"""
             parse(entities_curr_page, file_name)
 
