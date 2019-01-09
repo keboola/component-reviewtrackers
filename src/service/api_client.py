@@ -74,6 +74,11 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
 
             entities_curr_page = res.get("_embedded").get(endpoint)
             entities += entities_curr_page
+            """TEST"""
+            if int(starting_page) == 629:
+                logging.info(res)
+                raise Exception ("Pausing @ PAGE 629")
+            """"""
             parse(entities_curr_page, file_name)
 
             ex_itr += 1
