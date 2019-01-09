@@ -74,7 +74,20 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
 
             entities_curr_page = res.get("_embedded").get(endpoint)
             entities += entities_curr_page
-            parse(entities_curr_page, file_name)
+            """
+            TEST
+            if int(starting_page) == 629:
+                logging.info(res)
+                raise Exception("Pausing @ PAGE 629")
+            """
+            # if there are no more records, stop at that page
+            if len(entities_curr_page) == 0:
+                logging.info("No records found on page [{0}] @ [{1}]".format(starting_page, endpoint))
+                logging.info("Stopping [{0}] @ page [{1}]".format(endpoint, starting_page))
+                total_pages = starting_page
+                break
+            else:
+                parse(entities_curr_page, file_name)
 
             ex_itr += 1
             starting_page += 1

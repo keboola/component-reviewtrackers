@@ -48,6 +48,7 @@ def _read_state():
 
     else:
         temp = {}
+        logging.info("No State file is found.")
 
     return temp
 
@@ -216,7 +217,7 @@ def run(ui_username, ui_password, ui_clear_state, ui_tables):
     if ui_clear_state == "false":
         ex_state = _read_state()
     else:
-        logging.info("Clearning State File...")
+        logging.info("Clearing State File...")
         ex_state = {}
 
     for endpoint in ui_endpoints:
