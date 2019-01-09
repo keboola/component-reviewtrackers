@@ -82,6 +82,7 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
             """
             # if there are no more records, stop at that page
             if len(entities_curr_page) == 0:
+                print(entities_curr_page)
                 logging.info("No records found on page [{0}] @ [{1}]".format(starting_page, endpoint))
                 logging.info("Stopping [{0}] @ page [{1}]".format(endpoint, starting_page))
                 total_pages = starting_page
