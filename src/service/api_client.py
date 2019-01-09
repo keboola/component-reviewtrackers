@@ -86,7 +86,7 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
                 logging.info("Stopping [{0}] @ page [{1}]".format(endpoint, starting_page))
                 total_pages = starting_page
                 break
-            else:                
+            else:
                 parse(entities_curr_page, file_name)
 
             ex_itr += 1
