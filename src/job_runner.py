@@ -196,8 +196,12 @@ def _get_last_update_time(tables):
     return published_after
 
 
-def run(ui_username, ui_password, ui_endpoints, ui_clear_state, ui_tables):
+def run(ui_username, ui_password, ui_clear_state, ui_tables):
 
+    # Hardcoding the list of endpoints
+    ui_endpoints = ["locations", "reviews", "responses"]
+
+    # Authentication
     auth_res = _auth(username=ui_username, password=ui_password)
     account_id = auth_res.get('account_id')
     token = auth_res.get('token')
