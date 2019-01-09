@@ -11,10 +11,10 @@ MANDATORY_PARS = [
     'username',
     '#password',
     'endpoints',
-    'metrics'
+    'clear_state'
 ]
 
-APP_VERSION = '0.0.33'
+APP_VERSION = '0.0.36'
 
 
 class Component(KBCEnvHandler):
@@ -43,10 +43,10 @@ class Component(KBCEnvHandler):
         username = params.get('username')
         password = params.get('#password')
         endpoints = params.get('endpoints')
-        metrics = params.get('metrics')
+        clear_state = params.get('clear_state')
         tables = self.configuration.get_input_tables()
 
-        job_runner.run(username, password, endpoints, metrics, tables)
+        job_runner.run(username, password, endpoints, clear_state, tables)
 
 
 """
