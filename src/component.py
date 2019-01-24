@@ -14,7 +14,7 @@ MANDATORY_PARS = [
     'clear_state'
 ]
 
-APP_VERSION = '0.0.37'
+APP_VERSION = '0.0.38'
 
 
 class Component(KBCEnvHandler):
