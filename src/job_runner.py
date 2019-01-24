@@ -238,10 +238,6 @@ def run(ui_username, ui_password, ui_clear_state, ui_tables):
         # State File Content after 1 Endpoint extraction
         logging.info("Extractor State: {0}".format(ex_state))
 
-        if "reviews_" in file_name:
-            _produce_manifest(file_name, "reviews_id")
-        elif file_name in ["reviews", "locations", "responses"]:
-            _produce_manifest(file_name, "id")
     # State File Out
     _write_state(ex_state)
 
