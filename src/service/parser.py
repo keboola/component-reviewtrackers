@@ -1,4 +1,5 @@
 import os
+import json
 import logging
 import pandas as pd
 
@@ -173,7 +174,7 @@ def _output(filename, headers, data_in):
             with open(dest, 'w+') as b:
                 data.to_csv(b, index=False, header=True, columns=headers)
             b.close()
-            
+
             # Output Manifest
             _produce_manifest(filename, "id")
 
