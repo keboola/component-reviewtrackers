@@ -160,8 +160,8 @@ def parse(data_in, endpoint):
     if endpoint == "reviews":
         data_out, header = _review_parse(data_in)
         # _output(endpoint, review_header, data_out)
-    elif endpoint, header == "locations":
-        data_out = _location_parse(data_in)
+    elif endpoint == "locations":
+        data_out, header = _location_parse(data_in)
         # _output(endpoint, location_header, data_out)
     elif endpoint == "responses":
         data_out, header = _response_parse(data_in)
