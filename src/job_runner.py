@@ -115,27 +115,6 @@ def _parse_ui_metrics(ui_metrics, account_id):
     return metrics
 
 
-def _produce_manifest(file_name, primary_key):
-    """
-    Create manifest file
-    """
-
-    file = "/data/out/tables/" + str(file_name)+".csv.manifest"
-
-    manifest = {
-        "incremental": True,
-        "primary_key": [primary_key]
-    }
-    logging.debug(manifest)
-    try:
-        with open(file, 'w') as file_out:
-            json.dump(manifest, file_out)
-            logging.info("Output manifest file [{0}] produced.".format(file_name))
-    except Exception as e:
-        logging.error("Could not produce output file manifest.")
-        logging.error(e)
-
-
 def _output(filename, data):
     dest = DEFAULT_TABLE_DESTINATION + filename + ".csv"
 
@@ -238,10 +217,6 @@ def run(ui_username, ui_password, ui_clear_state, ui_tables):
         # State File Content after 1 Endpoint extraction
         logging.info("Extractor State: {0}".format(ex_state))
 
-        if "reviews_" in file_name:
-            _produce_manifest(file_name, "reviews_id")
-        elif file_name in ["reviews", "locations", "responses"]:
-            _produce_manifest(file_name, "id")
     # State File Out
     _write_state(ex_state)
 
