@@ -1,0 +1,35 @@
+{
+    "title": "Parameters",
+    "type": "object",
+    "required":[
+        "username",
+        "#password",
+        "clear_state"
+    ],
+    "properties":{
+        "username":{
+            "propertyOrder": 100,
+            "title": "username",
+            "type": "string",
+            "minLength": 4
+        },
+        "#password":{
+            "propertyOrder": 200,
+            "title": "password",
+            "format": "password",
+            "type": "string",
+            "minLength": 1
+        },
+        "clear_state":{
+            "propertyOrder": 400,
+            "title": "Clear State",
+            "type": "string",
+            "default": "false",
+            "enum": [
+                "true",
+                "false"
+            ],
+            "description": "Enabling 'Clear State' will wipe out the current extractor state. Every endpoint will be starting from 1st page."
+        }
+    }
+}

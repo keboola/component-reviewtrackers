@@ -94,7 +94,7 @@ def _review_parse(data_in):
                 temp[header] = ""
         data_out.append(temp)
 
-    return data_out
+    return data_out, review_header
 
 
 def _location_parse(data_in):
@@ -114,7 +114,7 @@ def _location_parse(data_in):
                 temp[header] = ""
         data_out.append(temp)
 
-    return data_out
+    return data_out, location_header
 
 
 def _response_parse(data_in):
@@ -130,34 +130,44 @@ def _response_parse(data_in):
                 temp[header] = ""
         data_out.append(temp)
 
-    return data_out
+    return data_out, response_header
 
 
 def _output(filename, headers, data_in):
-    dest = DEFAULT_TABLE_DESTINATION + filename + ".csv"
 
+    dest = DEFAULT_TABLE_DESTINATION + filename + ".csv"
     data = pd.DataFrame(data_in)
 
-    if os.path.isfile(dest):
-        with open(dest, 'a') as b:
-            data.to_csv(b, index=False, header=False, columns=headers)
-        b.close()
+    # If file is empty
+    if len(data) == 0:
+        logging.info("[{0}] contains no data.".format(filename))
+        pass
     else:
-        with open(dest, 'w+') as b:
-            data.to_csv(b, index=False, header=True, columns=headers)
-        b.close()
+        if os.path.isfile(dest):
+            with open(dest, 'a') as b:
+                data.to_csv(b, index=False, header=False, columns=headers)
+            b.close()
+        else:
+            with open(dest, 'w+') as b:
+                data.to_csv(b, index=False, header=True, columns=headers)
+            b.close()
+
+    return
 
 
 def parse(data_in, endpoint):
 
     if endpoint == "reviews":
-        data_out = _review_parse(data_in)
-        _output(endpoint, review_header, data_out)
-    elif endpoint == "locations":
+        data_out, header = _review_parse(data_in)
+        # _output(endpoint, review_header, data_out)
+    elif endpoint, header == "locations":
         data_out = _location_parse(data_in)
-        _output(endpoint, location_header, data_out)
+        # _output(endpoint, location_header, data_out)
     elif endpoint == "responses":
-        data_out = _response_parse(data_in)
-        _output(endpoint, response_header, data_out)
+        data_out, header = _response_parse(data_in)
+        # _output(endpoint, response_header, data_out)
+
+    # Output
+    _output(endpoint, header, data_out)
 
     return
