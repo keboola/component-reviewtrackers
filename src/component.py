@@ -39,7 +39,7 @@ class Component(KBCEnvHandler):
         '''
         Main execution code
         '''
-        params = self.cfg_params # noqa
+        params = self.cfg_params  # noqa
         username = params.get('username')
         password = params.get('#password')
         # endpoints = params.get('endpoints')

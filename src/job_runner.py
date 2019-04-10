@@ -10,12 +10,16 @@ from requests.auth import HTTPBasicAuth
 from service.api_client import request_endpoint
 
 
+# Input/Output Parameters
 DEFAULT_TABLE_SOURCE = "/data/in/tables/"
 DEFAULT_TABLE_DESTINATION = "/data/out/tables/"
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 def _auth(username, password):
+    """
+    Basic Authorization to Server
+    """
     url = 'https://api-gateway.reviewtrackers.com/auth'
 
     headers = {
@@ -61,21 +65,31 @@ def _write_state(data_in):
     logging.info("Outputting State file...")
     logging.info("Output State: {0}".format(data_in))
     with open("/data/out/state.json", "w") as f:
-            json.dump(data_in, f)
+        json.dump(data_in, f)
+
     return
 
 
 def _lookup(by, by_val, get):
+    """
+    Looking up Referenced Table
+    """
+
     if by == "endpoint" and "metrics" in by_val:
         tmp = by_val.split("/")
         by_val = "{}/{{account_id}}/{}".format(tmp[0], tmp[2])
     df_lookup = pd.read_csv('/code/src/lookup.csv')
     df_lookup = df_lookup.loc[df_lookup[by].isin([by_val])]
     s = df_lookup[get]
+
     return s.tolist()[0]
 
 
 def _validate_date_format(date_text):
+    """
+    Validating input date format
+    """
+
     try:
         datetime.datetime.strptime(date_text, '%Y-%m-%d')
         return True
@@ -85,6 +99,9 @@ def _validate_date_format(date_text):
 
 
 def _parse_ui_metrics(ui_metrics, account_id):
+    """
+    Formatting Input UI parameters
+    """
 
     lookup = {
         "Overview": {
@@ -135,8 +152,14 @@ def _produce_manifest(file_name, primary_key):
         logging.error("Could not produce output file manifest.")
         logging.error(e)
 
+    return
+
 
 def _output(filename, data):
+    """
+    Outputting File
+    """
+
     dest = DEFAULT_TABLE_DESTINATION + filename + ".csv"
 
     if os.path.isfile(dest):
@@ -154,11 +177,14 @@ def _output(filename, data):
         # _produce_manifest("reviews", "id")
         _produce_manifest(filename, "id")
 
+    return
+
 
 def _get_last_update_time(tables):
     """
     Getting the last updated time
     """
+
     tracking_file_path = "/data/in/tables/metadata_ingestion_records.csv"
     now = datetime.datetime.today()
     # today = now.date()
@@ -198,6 +224,9 @@ def _get_last_update_time(tables):
 
 
 def run(ui_username, ui_password, ui_clear_state, ui_tables):
+    """
+    Main Executor for Job_runner
+    """
 
     # Hardcoding the list of endpoints
     ui_endpoints = ["locations", "reviews", "responses"]

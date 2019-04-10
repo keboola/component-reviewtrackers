@@ -3,6 +3,7 @@ import base64
 import json
 import logging
 import copy
+import sys
 # from service.flattener import flatten
 from service.parser import parse
 
@@ -25,6 +26,10 @@ def _build_headers(username, token):
 
 
 def request_endpoint(username, token, state_file, endpoint, file_name, params):
+    """
+    Request endpoint with the provided pagination paramters
+    """
+
     entities = []
     headers = _build_headers(username, token)
     params["per_page"] = 250
@@ -43,7 +48,8 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
         ex_itr = 0
         if endpoint in state_file:
             starting_page = state_file[endpoint]["last_page_fetched"]
-            logging.info("Last fetched page: [{0}] @ [{1}]".format(starting_page, endpoint))
+            logging.info("Last fetched page: [{0}] @ [{1}]".format(
+                starting_page, endpoint))
         else:
             logging.info("Starting page: [1] @ [{0}]".format(endpoint))
         first_request_params = copy.deepcopy(params)
@@ -52,13 +58,22 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
         first_request_params["sort[order]"] = "ASC"
 
         # collect first page objects
-        res = requests.get(url=BASE_URL + endpoint, headers=headers, params=first_request_params)
+        res = requests.get(url=BASE_URL + endpoint,
+                           headers=headers, params=first_request_params)
         res = json.loads(res.text)
+
+        # Captures error
+        if "error" in res:
+            logging.error("{0}: {1}".format(res["error"], res["status"]))
+            sys.exit(1)
+
         total_pages = int(res.get('_total_pages'))
-        logging.info("Endpoint: [{0}]; Total Pages: [{1}]".format(endpoint, total_pages))
+        logging.info("Endpoint: [{0}]; Total Pages: [{1}]".format(
+            endpoint, total_pages))
 
         # First page processing
-        logging.info("Current Page: [{0}] @ [{1}] - Parsing".format(starting_page, endpoint))
+        logging.info(
+            "Current Page: [{0}] @ [{1}] - Parsing".format(starting_page, endpoint))
         entities_curr_page = res.get("_embedded").get(endpoint)
         entities += entities_curr_page
         parse(entities_curr_page, file_name)
@@ -70,20 +85,18 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
 
             res = requests.get(url=next_url, headers=headers, params=params)
             res = json.loads(res.text)
-            logging.info("Current Page: [{0}] @ [{1}] - Parsing".format(starting_page, endpoint))
+            logging.info(
+                "Current Page: [{0}] @ [{1}] - Parsing".format(starting_page, endpoint))
 
             entities_curr_page = res.get("_embedded").get(endpoint)
             entities += entities_curr_page
-            """
-            TEST
-            if int(starting_page) == 629:
-                logging.info(res)
-                raise Exception("Pausing @ PAGE 629")
-            """
+
             # if there are no more records, stop at that page
             if len(entities_curr_page) == 0:
-                logging.info("No records found on page [{0}] @ [{1}]".format(starting_page, endpoint))
-                logging.info("Stopping [{0}] @ page [{1}]".format(endpoint, starting_page))
+                logging.info("No records found on page [{0}] @ [{1}]".format(
+                    starting_page, endpoint))
+                logging.info("Stopping [{0}] @ page [{1}]".format(
+                    endpoint, starting_page))
                 total_pages = starting_page
                 break
             else:
