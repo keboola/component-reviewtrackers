@@ -23,14 +23,17 @@ def _auth(username, password):
     url = 'https://api-gateway.reviewtrackers.com/auth'
 
     headers = {
-        'Authorization': "{}:{}".format(username, password),
+        #'Authorization': "{}:{}".format(username, password),
         'Accept': "application/vnd.rtx.authorization.v2.hal+json;charset=utf-8",
         "Content-Type": "application/json"
     }
 
+    logging.info("Authorization Header: {0}".format(headers))
+
     res = requests.post(url=url, headers=headers, auth=HTTPBasicAuth(username, password))
 
     auth_res = json.loads(res.text)
+    logging.info("Authorization Return: {0}".format(auth_res))
 
     return {
         'account_id': auth_res.get('account_id'),
