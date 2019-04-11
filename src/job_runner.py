@@ -23,14 +23,15 @@ def _auth(username, password):
     url = 'https://api-gateway.reviewtrackers.com/auth'
 
     headers = {
-        #'Authorization': "{}:{}".format(username, password),
+        # 'Authorization': "{}:{}".format(username, password),
         'Accept': "application/vnd.rtx.authorization.v2.hal+json;charset=utf-8",
         "Content-Type": "application/json"
     }
 
     logging.info("Authorization Header: {0}".format(headers))
 
-    res = requests.post(url=url, headers=headers, auth=HTTPBasicAuth(username, password))
+    res = requests.post(url=url, headers=headers,
+                        auth=HTTPBasicAuth(username, password))
 
     auth_res = json.loads(res.text)
     logging.info("Authorization Return: {0}".format(auth_res))
@@ -128,8 +129,10 @@ def _parse_ui_metrics(ui_metrics, account_id):
         else:
             if _validate_date_format(m.get("month_after")) \
                     and _validate_date_format(m.get("month_before")):
-                m["endpoint"] = lookup.get(m.get("report_type")).get("endpoint")
-                m["file_name"] = lookup.get(m.get("report_type")).get("file_name")
+                m["endpoint"] = lookup.get(
+                    m.get("report_type")).get("endpoint")
+                m["file_name"] = lookup.get(
+                    m.get("report_type")).get("file_name")
                 metrics.append(m)
 
     return metrics
@@ -150,7 +153,8 @@ def _produce_manifest(file_name, primary_key):
     try:
         with open(file, 'w') as file_out:
             json.dump(manifest, file_out)
-            logging.info("Output manifest file [{0}] produced.".format(file_name))
+            logging.info(
+                "Output manifest file [{0}] produced.".format(file_name))
     except Exception as e:
         logging.error("Could not produce output file manifest.")
         logging.error(e)
@@ -209,7 +213,8 @@ def _get_last_update_time(tables):
             raise FileNotFoundError
         df = pd.read_csv(tracking_file_path)
         df["ingest_time"] = pd.to_datetime(df["ingest_time"])
-        df["review_published_before"] = pd.to_datetime(df["review_published_before"])
+        df["review_published_before"] = pd.to_datetime(
+            df["review_published_before"])
         num_of_rows = df.shape[0]
         if num_of_rows == 0:
             raise ValueError
@@ -217,7 +222,8 @@ def _get_last_update_time(tables):
         df_updated = df.append(df_new_record)
         published_after = str(published_after.date())
     except (FileNotFoundError, ValueError):
-        logging.warning("Incorrect metadata_ingestion_records table, creating a new one...")
+        logging.warning(
+            "Incorrect metadata_ingestion_records table, creating a new one...")
         # published_after = today - dateutil.relativedelta.relativedelta(months=1)
         published_after = None
         df_updated = df_new_record
@@ -262,9 +268,11 @@ def run(ui_username, ui_password, ui_clear_state, ui_tables):
 
         logging.info("fetching endpoint {} ...".format(endpoint))
         file_name = _lookup(by='endpoint', by_val=endpoint, get='file_name')
-        json_res, ex_state = request_endpoint(ui_username, token, ex_state, endpoint, file_name, params)
+        json_res, ex_state = request_endpoint(
+            ui_username, token, ex_state, endpoint, file_name, params)
         if json_res == 404:
-            logging.warning("Endpoint [{}] not found, 404 Error".format(endpoint))
+            logging.warning(
+                "Endpoint [{}] not found, 404 Error".format(endpoint))
             continue
 
         # State File Content after 1 Endpoint extraction
