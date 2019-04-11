@@ -21,20 +21,21 @@ def _auth(username, password):
     Basic Authorization to Server
     """
     url = 'https://api-gateway.reviewtrackers.com/auth'
-
+    logging.info("{0}:{1}".format(username, password))
     headers = {
         # 'Authorization': "{}:{}".format(username, password),
         'Accept': "application/vnd.rtx.authorization.v2.hal+json;charset=utf-8",
         "Content-Type": "application/json"
     }
 
-    logging.info("Authorization Header: {0}".format(headers))
-
     res = requests.post(url=url, headers=headers,
                         auth=HTTPBasicAuth(username, password))
 
     auth_res = json.loads(res.text)
     logging.info("Authorization Return: {0}".format(auth_res))
+    if "error" in auth_res:
+        logging.error("{0}: {1}".format(auth_res["error"], auth_res["status"]))
+        sys.exit(1)
 
     return {
         'account_id': auth_res.get('account_id'),
