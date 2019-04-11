@@ -9,7 +9,7 @@ import job_runner
 
 MANDATORY_PARS = [
     'username',
-    '#password',
+    'password',
     # 'endpoints',
     'clear_state'
 ]
@@ -41,7 +41,7 @@ class Component(KBCEnvHandler):
         '''
         params = self.cfg_params  # noqa
         username = params.get('username')
-        password = params.get('#password')
+        password = params.get('password')
         # endpoints = params.get('endpoints')
         clear_state = params.get('clear_state')
         tables = self.configuration.get_input_tables()
