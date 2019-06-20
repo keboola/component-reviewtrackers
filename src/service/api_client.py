@@ -106,6 +106,9 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
             starting_page += 1
 
         # Update State file parameters
+        # Prevent weird pagination output from ReviewTrackers
+        if starting_page > total_pages:
+            starting_page = total_pages
         endpoint_state = {
             "last_page_fetched": starting_page - 1,
             "total_pages": total_pages
