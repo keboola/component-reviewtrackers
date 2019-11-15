@@ -144,7 +144,7 @@ def _response_parse(data_in):
     return data_out, response_header
 
 
-def _produce_manifest(file_name, primary_key):
+def _produce_manifest(file_name, primary_key, columns):
     """
     Create manifest file
     """
@@ -153,7 +153,8 @@ def _produce_manifest(file_name, primary_key):
 
     manifest = {
         "incremental": True,
-        "primary_key": [primary_key]
+        "primary_key": [primary_key],
+        "columns": columns
     }
     logging.debug(manifest)
     try:
@@ -172,6 +173,7 @@ def _output(filename, headers, data_in):
     data = pd.DataFrame(data_in)
 
     # If file is empty
+    '''
     if len(data) == 0:
         logging.info("[{0}] contains no data.".format(filename))
         pass
@@ -187,6 +189,19 @@ def _output(filename, headers, data_in):
 
             # Output Manifest
             _produce_manifest(filename, "id")
+    '''
+    # Outputting file even the file is empty
+    if os.path.isfile(dest):
+        with open(dest, 'a') as b:
+            data.to_csv(b, index=False, header=False, columns=headers)
+        b.close()
+    else:
+        with open(dest, 'w+') as b:
+            data.to_csv(b, index=False, header=False, columns=headers)
+        b.close()
+
+        # Output Manifest
+        _produce_manifest(filename, "id", headers)
 
     return
 
