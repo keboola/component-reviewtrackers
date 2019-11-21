@@ -170,7 +170,7 @@ def _produce_manifest(file_name, primary_key, columns):
 def _output(filename, headers, data_in):
 
     dest = DEFAULT_TABLE_DESTINATION + filename + ".csv"
-    data = pd.DataFrame(data_in)
+    data = pd.DataFrame(data_in, columns=headers)
 
     # If file is empty
     '''
@@ -193,11 +193,11 @@ def _output(filename, headers, data_in):
     # Outputting file even the file is empty
     if os.path.isfile(dest):
         with open(dest, 'a') as b:
-            data.to_csv(b, index=False, header=False, columns=headers)
+            data.to_csv(b, index=False, header=False)  # , columns=headers)
         b.close()
     else:
         with open(dest, 'w+') as b:
-            data.to_csv(b, index=False, header=False, columns=headers)
+            data.to_csv(b, index=False, header=False)  # , columns=headers)
         b.close()
 
         # Output Manifest
