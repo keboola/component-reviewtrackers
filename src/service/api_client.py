@@ -34,6 +34,8 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
     headers = _build_headers(username, token)
     params["per_page"] = 250
 
+    if endpoint == "reviews":
+        endpoint = "v2/"+endpoint
     res = requests.get(url=BASE_URL + endpoint, headers=headers, params=params)
     if res.status_code == 404:
         print(res.text)
