@@ -37,10 +37,14 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
     if endpoint == "reviews":
         endpoint = "v2/"+endpoint
     res = requests.get(url=BASE_URL + endpoint, headers=headers, params=params)
+
+    logging.info('Request Link: {}, params: {}'.format(BASE_URL + endpoint, params))
+
     if res.status_code == 404:
         print(res.text)
         return 404
     res = json.loads(res.text)
+    logging.info(res)
 
     if 'metrics' in endpoint:
         entities.append(res)
@@ -59,10 +63,14 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
         first_request_params["sort[by]"] = "created_at"
         first_request_params["sort[order]"] = "ASC"
 
+        logging.info('{}'.format(first_request_params))
+
         # collect first page objects
         res = requests.get(url=BASE_URL + endpoint,
                            headers=headers, params=first_request_params)
         res = json.loads(res.text)
+
+        logging.info(res)
 
         # Captures error
         if "error" in res:
