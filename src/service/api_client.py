@@ -38,7 +38,8 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
         endpoint = "v2/"+endpoint
     res = requests.get(url=BASE_URL + endpoint, headers=headers, params=params)
 
-    logging.info('Request Link: {}, params: {}'.format(BASE_URL + endpoint, params))
+    logging.info('Request Link: {}, params: {}'.format(
+        BASE_URL + endpoint, params))
 
     if res.status_code == 404:
         print(res.text)
@@ -90,7 +91,7 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
             total_pages = int(res.get('_total_pages'))
         else:
             total_pages = 1
-        
+
         logging.info("Endpoint: [{0}]; Total Pages: [{1}]".format(
             endpoint, total_pages))
 
