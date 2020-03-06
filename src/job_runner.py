@@ -240,8 +240,7 @@ def run(ui_username, ui_password, ui_clear_state, ui_tables):
     """
 
     # Hardcoding the list of endpoints
-    # ui_endpoints = ["locations", "reviews", "responses"]
-    ui_endpoints = ["reviews"]
+    ui_endpoints = ["locations", "reviews", "responses"]
 
     # Authentication
     auth_res = _auth(username=ui_username, password=ui_password)
