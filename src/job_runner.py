@@ -8,7 +8,7 @@ import warnings
 import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
-from service.api_client import request_endpoint
+from service.api_client import request_endpoint, request_reviews_v2
 
 
 # Input/Output Parameters
@@ -240,7 +240,8 @@ def run(ui_username, ui_password, ui_clear_state, ui_tables):
     """
 
     # Hardcoding the list of endpoints
-    ui_endpoints = ["locations", "reviews", "responses"]
+    # ui_endpoints = ["locations", "reviews", "responses"]
+    ui_endpoints = ["reviews"]
 
     # Authentication
     auth_res = _auth(username=ui_username, password=ui_password)
@@ -270,8 +271,12 @@ def run(ui_username, ui_password, ui_clear_state, ui_tables):
 
         logging.info("fetching endpoint {} ...".format(endpoint))
         file_name = _lookup(by='endpoint', by_val=endpoint, get='file_name')
-        json_res, ex_state = request_endpoint(
-            ui_username, token, ex_state, endpoint, file_name, params)
+        if endpoint == 'reviews':
+            json_res, ex_state = request_reviews_v2(
+                ui_username, token, ex_state, endpoint, file_name, params)
+        else:
+            json_res, ex_state = request_endpoint(
+                ui_username, token, ex_state, endpoint, file_name, params)
         if json_res == 404:
             logging.warning(
                 "Endpoint [{}] not found, 404 Error".format(endpoint))

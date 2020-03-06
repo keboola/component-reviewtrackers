@@ -25,6 +25,60 @@ def _build_headers(username, token):
     }
 
 
+def request_reviews_v2(username, token, state_file, endpoint, file_name, params):
+    """
+    Request new review endpoint with provided parameters
+    """
+
+    entities = []
+    headers = _build_headers(username, token)
+    request_endpoint = 'v2/{}'.format(endpoint)
+    params['per_page'] = 250
+    ex_itr = 0  # Keeping track of the number of extractions
+    while_loop = True
+
+    # Fetching last state
+    try:
+        next_cursor = state_file['reviews']['last_cursor']
+        logging.info('[reviews] last cursor: {}'.format(next_cursor))
+    except Exception:
+        next_cursor = None
+
+    params['sort[by]'] = 'published_at'
+    params['sort[order]'] = 'ASC'
+    last_cursor = next_cursor
+
+    while while_loop and ex_itr <= 100:
+        if next_cursor:
+            params['after'] = next_cursor
+
+        res = requests.get(url=BASE_URL+request_endpoint,
+                           headers=headers, params=params)
+        res_json = res.json()
+        # Outputting
+        parse(res_json['data'], file_name)
+        try:
+            next_cursor = res_json['paging']['cursors']['after']
+            if next_cursor is None:
+                while_loop = False
+            else:
+                last_cursor = next_cursor
+                logging.info(
+                    '[reviews] next paging cursor: {}'.format(last_cursor))
+        except Exception:
+            next_cursor = None
+            while_loop = False
+
+        ex_itr += 1
+
+    endpoint_state = {
+        'last_cursor': last_cursor
+    }
+    state_file[endpoint] = endpoint_state
+
+    return entities, state_file
+
+
 def request_endpoint(username, token, state_file, endpoint, file_name, params):
     """
     Request endpoint with the provided pagination paramters
@@ -34,20 +88,12 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
     headers = _build_headers(username, token)
     params["per_page"] = 250
 
-    if endpoint == "reviews":
-        endpoint = "v2/"+endpoint
     res = requests.get(url=BASE_URL + endpoint, headers=headers, params=params)
-
-    logging.info('Request Link: {}, params: {}'.format(
-        BASE_URL + endpoint, params))
 
     if res.status_code == 404:
         print(res.text)
         return 404
     res = json.loads(res.text)
-
-    if endpoint == "v2/reviews":
-        logging.info(res)
 
     if 'metrics' in endpoint:
         entities.append(res)
@@ -63,34 +109,20 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
             logging.info("Starting page: [1] @ [{0}]".format(endpoint))
         first_request_params = copy.deepcopy(params)
         first_request_params["page"] = starting_page
-        if endpoint == "v2/reviews":
-            first_request_params["sort[by]"] = "published_at"
-        else:
-            first_request_params["sort[by]"] = "created_at"
+        first_request_params["sort[by]"] = "created_at"
         first_request_params["sort[order]"] = "ASC"
-
-        logging.info('{}'.format(first_request_params))
 
         # collect first page objects
         res = requests.get(url=BASE_URL + endpoint,
                            headers=headers, params=first_request_params)
         res = json.loads(res.text)
 
-        for i in res:
-            if i == 'data':
-                pass
-            else:
-                logging.info('{} -- {}'.format(i, res[i]))
-
         # Captures error
         if "error" in res:
             logging.error("{0}: {1}".format(res["error"], res["status"]))
             sys.exit(1)
 
-        if not res.get('_total_pages'):
-            total_pages = int(res.get('_total_pages'))
-        else:
-            total_pages = 1
+        total_pages = int(res.get('_total_pages'))
 
         logging.info("Endpoint: [{0}]; Total Pages: [{1}]".format(
             endpoint, total_pages))
