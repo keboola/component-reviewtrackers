@@ -75,14 +75,22 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
                            headers=headers, params=first_request_params)
         res = json.loads(res.text)
 
-        logging.info(res)
+        for i in res:
+            if i == 'data':
+                pass
+            else:
+                logging.info('{} -- {}'.format(i, res[i]))
 
         # Captures error
         if "error" in res:
             logging.error("{0}: {1}".format(res["error"], res["status"]))
             sys.exit(1)
 
-        total_pages = int(res.get('_total_pages'))
+        if not res.get('_total_pages'):
+            total_pages = int(res.get('_total_pages'))
+        else:
+            total_pages = 1
+        
         logging.info("Endpoint: [{0}]; Total Pages: [{1}]".format(
             endpoint, total_pages))
 
