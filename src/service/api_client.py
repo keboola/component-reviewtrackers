@@ -44,7 +44,9 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
         print(res.text)
         return 404
     res = json.loads(res.text)
-    logging.info(res)
+
+    if endpoint == "v2/reviews":
+        logging.info(res)
 
     if 'metrics' in endpoint:
         entities.append(res)
@@ -60,7 +62,10 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
             logging.info("Starting page: [1] @ [{0}]".format(endpoint))
         first_request_params = copy.deepcopy(params)
         first_request_params["page"] = starting_page
-        first_request_params["sort[by]"] = "created_at"
+        if endpoint == "v2/reviews":
+            first_request_params["sort[by]"] = "published_at"
+        else:
+            first_request_params["sort[by]"] = "created_at"
         first_request_params["sort[order]"] = "ASC"
 
         logging.info('{}'.format(first_request_params))
