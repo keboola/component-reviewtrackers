@@ -56,7 +56,8 @@ location_header = [
     "state_id",
     "updated_at",
     "url_id",
-    "zipcode"
+    "zipcode",
+    "hours"
 ]
 response_header = [
     "account_id",
