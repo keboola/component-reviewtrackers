@@ -25,7 +25,10 @@ review_header = [
     "respondable",
     "source_code",
     "source_name",
-    "url_metadata_google_serp"
+    "url_metadata_google_serp",
+    "url_metadata_yelp",
+    "origin_published_at",
+    "updated_at"
 ]
 location_header = [
     "account_id",
@@ -202,7 +205,10 @@ def _output(filename, headers, data_in):
         b.close()
 
         # Output Manifest
-        _produce_manifest(filename, "id", headers)
+        if filename == "reviews":
+            _produce_manifest(filename, "id,updated_at", headers)
+        else:
+            _produce_manifest(filename, "id", headers)
 
     return
 
