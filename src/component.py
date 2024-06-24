@@ -11,7 +11,7 @@ MANDATORY_PARS = [
     'username',
     '#password',
     # 'endpoints',
-    'clear_state'
+    # 'clear_state'
 ]
 
 APP_VERSION = '0.1.3'
