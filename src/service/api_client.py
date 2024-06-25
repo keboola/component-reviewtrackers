@@ -172,3 +172,20 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
         state_file[endpoint] = endpoint_state
 
     return entities, state_file
+
+
+def request_accounts(username, token):
+    """
+    Request accounts
+    """
+    headers = _build_headers(username, token)
+    res = requests.get(url=BASE_URL + "accounts", headers=headers)
+
+    if res.status_code == 404:
+        print(res.text)
+        return 404
+    res = json.loads(res.text)
+
+    accounts = res.get("_embedded").get("accounts")
+    accounts_ids = [account['id'] for account in accounts]
+    return accounts_ids
