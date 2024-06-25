@@ -25,7 +25,10 @@ review_header = [
     "respondable",
     "source_code",
     "source_name",
-    "url_metadata_google_serp"
+    "url_metadata_google_serp",
+    "url_metadata_yelp",
+    "origin_published_at",
+    "updated_at"
 ]
 location_header = [
     "account_id",
@@ -168,7 +171,7 @@ def _produce_manifest(file_name, primary_key, columns):
         logging.error(e)
 
 
-def _output(filename, headers, data_in):
+def _output(filename, headers, data_in, primary_key="id"):
 
     dest = DEFAULT_TABLE_DESTINATION + filename + ".csv"
     data = pd.DataFrame(data_in, columns=headers)
@@ -202,7 +205,7 @@ def _output(filename, headers, data_in):
         b.close()
 
         # Output Manifest
-        _produce_manifest(filename, "id", headers)
+        _produce_manifest(filename, primary_key, headers)
 
     return
 
@@ -214,15 +217,12 @@ def parse(data_in, endpoint):
 
     if endpoint == "reviews":
         data_out, header = _review_parse(data_in)
-        # _output(endpoint, review_header, data_out)
+        _output(endpoint, header, data_out, "id,updated_at")
     elif endpoint == "locations":
         data_out, header = _location_parse(data_in)
-        # _output(endpoint, location_header, data_out)
+        _output(endpoint, header, data_out)
     elif endpoint == "responses":
         data_out, header = _response_parse(data_in)
-        # _output(endpoint, response_header, data_out)
-
-    # Output
-    _output(endpoint, header, data_out)
+        _output(endpoint, header, data_out)
 
     return
