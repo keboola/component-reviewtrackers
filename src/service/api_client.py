@@ -64,7 +64,6 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
             logging.error(
                 "Error while parsing data: {}".format(str(e)))
 
-
         try:
             next_cursor = res_json['paging']['cursors']['after']
             if next_cursor is None:
