@@ -39,7 +39,6 @@ def _auth(username, password):
         sys.exit(1)
 
     return {
-        'account_id': auth_res.get('account_id'),
         'token': auth_res.get('token')
     }
 
@@ -244,11 +243,7 @@ def run(ui_username, ui_password, ui_clear_state, ui_tables):
 
     # Authentication
     auth_res = _auth(username=ui_username, password=ui_password)
-    account_id = auth_res.get('account_id')
     token = auth_res.get('token')
-    params = {
-        'account_id': account_id
-    }
 
     # last_update_time = _get_last_update_time(tables=ui_tables)
 
@@ -264,7 +259,9 @@ def run(ui_username, ui_password, ui_clear_state, ui_tables):
 
     for endpoint in ui_endpoints:
         for account in accounts:
-            params["account_id"] = account
+            params = {
+                'account_id': account
+            }
 
             # if endpoint == "reviews" and last_update_time:
             #     params["published_after"] = last_update_time
