@@ -8,7 +8,7 @@ import warnings
 import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
-from service.api_client import request_endpoint, request_reviews_v2
+from service.api_client import request_endpoint, request_reviews_v2, request_accounts
 
 
 # Input/Output Parameters
@@ -39,7 +39,6 @@ def _auth(username, password):
         sys.exit(1)
 
     return {
-        'account_id': auth_res.get('account_id'),
         'token': auth_res.get('token')
     }
 
@@ -244,11 +243,7 @@ def run(ui_username, ui_password, ui_clear_state, ui_tables):
 
     # Authentication
     auth_res = _auth(username=ui_username, password=ui_password)
-    account_id = auth_res.get('account_id')
     token = auth_res.get('token')
-    params = {
-        'account_id': account_id
-    }
 
     # last_update_time = _get_last_update_time(tables=ui_tables)
 
@@ -260,29 +255,35 @@ def run(ui_username, ui_password, ui_clear_state, ui_tables):
         logging.info("Clearing State File...")
         ex_state = {}
 
+    accounts = request_accounts(ui_username, token)
+
     for endpoint in ui_endpoints:
+        for account in accounts:
+            params = {
+                'account_id': account
+            }
 
-        # if endpoint == "reviews" and last_update_time:
-        #     params["published_after"] = last_update_time
-        # else:
-        #     if "published_after" in params:
-        #         del params["published_after"]
+            # if endpoint == "reviews" and last_update_time:
+            #     params["published_after"] = last_update_time
+            # else:
+            #     if "published_after" in params:
+            #         del params["published_after"]
 
-        logging.info("fetching endpoint {} ...".format(endpoint))
-        file_name = _lookup(by='endpoint', by_val=endpoint, get='file_name')
-        if endpoint == 'reviews':
-            json_res, ex_state = request_reviews_v2(
-                ui_username, token, ex_state, endpoint, file_name, params)
-        else:
-            json_res, ex_state = request_endpoint(
-                ui_username, token, ex_state, endpoint, file_name, params)
-        if json_res == 404:
-            logging.warning(
-                "Endpoint [{}] not found, 404 Error".format(endpoint))
-            continue
+            logging.info("fetching endpoint {} ...".format(endpoint))
+            file_name = _lookup(by='endpoint', by_val=endpoint, get='file_name')
+            if endpoint == 'reviews':
+                json_res, ex_state = request_reviews_v2(
+                    ui_username, token, ex_state, endpoint, file_name, params)
+            else:
+                json_res, ex_state = request_endpoint(
+                    ui_username, token, ex_state, endpoint, file_name, params)
+            if json_res == 404:
+                logging.warning(
+                    "Endpoint [{}] not found, 404 Error".format(endpoint))
+                continue
 
-        # State File Content after 1 Endpoint extraction
-        logging.info("Extractor State: {0}".format(ex_state))
+            # State File Content after 1 Endpoint extraction
+            logging.info("Extractor State: {0}".format(ex_state))
 
     # State File Out
     _write_state(ex_state)

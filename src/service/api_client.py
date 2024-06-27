@@ -56,7 +56,14 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
                            headers=headers, params=params)
         res_json = res.json()
         # Outputting
-        parse(res_json['data'], file_name)
+
+        try:
+            parse(res_json['data'], file_name)
+        except Exception as e:
+            logging.error(res_json)
+            logging.error(
+                "Error while parsing data: {}".format(str(e)))
+
         try:
             next_cursor = res_json['paging']['cursors']['after']
             if next_cursor is None:
@@ -172,3 +179,20 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
         state_file[endpoint] = endpoint_state
 
     return entities, state_file
+
+
+def request_accounts(username, token):
+    """
+    Request accounts
+    """
+    headers = _build_headers(username, token)
+    res = requests.get(url=BASE_URL + "accounts", headers=headers)
+
+    if res.status_code == 404:
+        print(res.text)
+        return 404
+    res = json.loads(res.text)
+
+    accounts = res.get("_embedded").get("accounts")
+    accounts_ids = [account['id'] for account in accounts]
+    return accounts_ids
