@@ -258,11 +258,11 @@ def run(ui_username, ui_password, ui_clear_state, ui_tables):
     accounts = request_accounts(ui_username, token)
 
     for endpoint in ui_endpoints:
+        accounts_state = {}
         for account in accounts:
             params = {
                 'account_id': account
             }
-
             # if endpoint == "reviews" and last_update_time:
             #     params["published_after"] = last_update_time
             # else:
@@ -272,18 +272,21 @@ def run(ui_username, ui_password, ui_clear_state, ui_tables):
             logging.info("fetching endpoint {} ...".format(endpoint))
             file_name = _lookup(by='endpoint', by_val=endpoint, get='file_name')
             if endpoint == 'reviews':
-                json_res, ex_state = request_reviews_v2(
+                json_res, ex_state_new = request_reviews_v2(
                     ui_username, token, ex_state, endpoint, file_name, params)
             else:
-                json_res, ex_state = request_endpoint(
+                json_res, ex_state_new = request_endpoint(
                     ui_username, token, ex_state, endpoint, file_name, params)
             if json_res == 404:
                 logging.warning(
                     "Endpoint [{}] not found, 404 Error".format(endpoint))
                 continue
 
-            # State File Content after 1 Endpoint extraction
-            logging.info("Extractor State: {0}".format(ex_state))
+            accounts_state[account] = ex_state_new
+        ex_state[endpoint] = accounts_state
+
+        # State File Content after 1 Endpoint extraction
+        logging.info("Extractor State: {0}".format(ex_state))
 
     # State File Out
     _write_state(ex_state)
