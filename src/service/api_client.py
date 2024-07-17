@@ -38,15 +38,11 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
     while_loop = True
 
     # Fetching last state
-    try:
-        next_cursor = state_file['reviews']['last_cursor']
-        logging.info('[reviews] last cursor: {}'.format(next_cursor))
-    except Exception:
-        try:
-            next_cursor = state_file['reviews'][params['account_id']]['last_cursor']
-            logging.info('[reviews] last cursor: {}'.format(next_cursor))
-        except Exception:
-            next_cursor = None
+    next_cursor = state_file.get('reviews', {}).get('last_cursor')
+    if not next_cursor:
+        next_cursor = state_file.get('reviews', {}).get('account_id', {}).get('last_cursor')
+
+    logging.info('[reviews] last cursor: {}'.format(next_cursor))
 
     params['sort[by]'] = 'published_at'
     params['sort[order]'] = 'ASC'
