@@ -38,11 +38,11 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
     while_loop = True
 
     # Fetching last state
-    try:
-        next_cursor = state_file['reviews']['last_cursor']
-        logging.info('[reviews] last cursor: {}'.format(next_cursor))
-    except Exception:
-        next_cursor = None
+    next_cursor = state_file.get('reviews', {}).get('last_cursor')
+    if not next_cursor:
+        next_cursor = state_file.get('reviews', {}).get('account_id', {}).get('last_cursor')
+
+    logging.info('[reviews] last cursor: {}'.format(next_cursor))
 
     params['sort[by]'] = 'published_at'
     params['sort[order]'] = 'ASC'
@@ -78,18 +78,17 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
 
         ex_itr += 1
 
-    endpoint_state = {
-        'last_cursor': last_cursor
-    }
-    state_file[endpoint] = endpoint_state
+    endpoint_state = {'last_cursor': last_cursor}
 
-    return entities, state_file
+    return entities, endpoint_state
 
 
 def request_endpoint(username, token, state_file, endpoint, file_name, params):
     """
     Request endpoint with the provided pagination paramters
     """
+
+    endpoint_state = {}
 
     entities = []
     headers = _build_headers(username, token)
@@ -108,7 +107,11 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
         starting_page = 1
         # Limiting ex to terminate at 100th request
         ex_itr = 0
-        if endpoint in state_file:
+        if endpoint in state_file and params['account_id'] in state_file[endpoint]:
+            starting_page = state_file[endpoint][params['account_id']]["last_page_fetched"]
+            logging.info("Last fetched page: [{0}] @ [{1}]".format(
+                starting_page, endpoint))
+        elif endpoint in state_file:
             starting_page = state_file[endpoint]["last_page_fetched"]
             logging.info("Last fetched page: [{0}] @ [{1}]".format(
                 starting_page, endpoint))
@@ -176,9 +179,8 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
             "last_page_fetched": starting_page - 1,
             "total_pages": total_pages
         }
-        state_file[endpoint] = endpoint_state
 
-    return entities, state_file
+    return entities, endpoint_state
 
 
 def request_accounts(username, token):
