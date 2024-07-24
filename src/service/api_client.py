@@ -53,14 +53,12 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
         res = requests.get(url=BASE_URL + request_url,
                            headers=headers, params=params)
         res_json = res.json()
-        # Outputting
 
         try:
             parse(res_json['data'], file_name)
         except Exception as e:
             logging.error(res_json)
-            logging.error(
-                "Error while parsing data: {}".format(str(e)))
+            logging.error("Error while parsing data: {}".format(str(e)))
 
         try:
             next_cursor = res_json['paging']['cursors']['after']
@@ -68,7 +66,7 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
                 while_loop = False
             else:
                 last_cursor = next_cursor
-                logging.info('[reviews] next paging cursor: {}'.format(last_cursor))
+                logging.debug('[reviews] next paging cursor: {}'.format(last_cursor))
         except Exception:
             next_cursor = None
             while_loop = False
@@ -127,12 +125,10 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
 
         total_pages = int(res.get('_total_pages'))
 
-        logging.info("Endpoint: [{0}]; Total Pages: [{1}]".format(
-            endpoint, total_pages))
+        logging.info("Endpoint: [{0}]; Total Pages: [{1}]".format(endpoint, total_pages))
 
         # First page processing
-        logging.info(
-            "Current Page: [{0}] @ [{1}] - Parsing".format(starting_page, endpoint))
+        logging.info("Current Page: [{0}] @ [{1}] - Parsing".format(starting_page, endpoint))
         entities_curr_page = res.get("_embedded").get(endpoint)
         entities += entities_curr_page
         parse(entities_curr_page, file_name)
@@ -140,12 +136,11 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
 
         while "next" in res["_links"]:
             next_url = res["_links"]["next"]["href"]
-            logging.info("Next Url: ...{0}".format(next_url[-60:]))
+            logging.debug("Next Url: ...{0}".format(next_url[-60:]))
 
             res = requests.get(url=next_url, headers=headers, params=params)
             res = json.loads(res.text)
-            logging.info(
-                "Current Page: [{0}] @ [{1}] - Parsing".format(starting_page, endpoint))
+            logging.info("Current Page: [{0}] @ [{1}] - Parsing".format(starting_page, endpoint))
 
             entities_curr_page = res.get("_embedded").get(endpoint)
             entities += entities_curr_page
