@@ -1,8 +1,3 @@
-'''
-Template Component main class.
-
-'''
-
 from kbc.env_handler import KBCEnvHandler
 import logging
 import job_runner
@@ -10,11 +5,7 @@ import job_runner
 MANDATORY_PARS = [
     'username',
     '#password',
-    # 'endpoints',
-    # 'clear_state'
 ]
-
-APP_VERSION = '0.1.3'
 
 
 class Component(KBCEnvHandler):
@@ -22,11 +13,10 @@ class Component(KBCEnvHandler):
     def __init__(self, debug=False):
         KBCEnvHandler.__init__(self, MANDATORY_PARS)
         # override debug from config
-        if (self.cfg_params.get('debug')):
+        if self.cfg_params.get('debug'):
             debug = True
 
         self.set_default_logger('DEBUG' if debug else 'INFO')
-        logging.info('Running version %s', APP_VERSION)
         logging.info('Loading configuration...')
 
         try:
@@ -35,18 +25,16 @@ class Component(KBCEnvHandler):
             logging.error(e)
             exit(1)
 
-    def run(self, debug=True):
-        '''
+    def run(self):
+        """
         Main execution code
-        '''
+        """
         params = self.cfg_params  # noqa
         username = params.get('username')
         password = params.get('#password')
-        # endpoints = params.get('endpoints')
         clear_state = params.get('clear_state')
-        tables = self.configuration.get_input_tables()
 
-        job_runner.run(username, password, clear_state, tables)
+        job_runner.run(username, password, clear_state)
 
 
 """

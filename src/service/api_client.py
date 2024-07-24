@@ -4,14 +4,12 @@ import json
 import logging
 import copy
 import sys
-# from service.flattener import flatten
-from service.parser import parse
 
+from service.parser import parse
 
 BASE_URL = "https://api.reviewtrackers.com/"
 DEFAULT_TABLE_SOURCE = "/data/in/tables/"
 DEFAULT_TABLE_DESTINATION = "/data/out/tables/"
-# BASE_URL = "https://api-gateway.reviewtrackers.com/"
 
 
 def _build_headers(username, token):
@@ -32,9 +30,9 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
 
     entities = []
     headers = _build_headers(username, token)
-    request_endpoint = 'v2/{}'.format(endpoint)
-    params['per_page'] = 250
-    ex_itr = 0  # Keeping track of the number of extractions
+    request_url = 'v2/{}'.format(endpoint)
+    params['per_page'] = 500
+
     while_loop = True
 
     # Fetching last state
@@ -42,27 +40,25 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
     if not next_cursor:
         next_cursor = state_file.get('reviews', {}).get('account_id', {}).get('last_cursor')
 
-    logging.info('[reviews] last cursor: {}'.format(next_cursor))
+    logging.info('[reviews] loaded last cursor from state: {}'.format(next_cursor))
 
     params['sort[by]'] = 'published_at'
     params['sort[order]'] = 'ASC'
     last_cursor = next_cursor
 
-    while while_loop and ex_itr <= 100:
+    while while_loop:
         if next_cursor:
             params['after'] = next_cursor
 
-        res = requests.get(url=BASE_URL+request_endpoint,
+        res = requests.get(url=BASE_URL + request_url,
                            headers=headers, params=params)
         res_json = res.json()
-        # Outputting
 
         try:
             parse(res_json['data'], file_name)
         except Exception as e:
             logging.error(res_json)
-            logging.error(
-                "Error while parsing data: {}".format(str(e)))
+            logging.error("Error while parsing data: {}".format(str(e)))
 
         try:
             next_cursor = res_json['paging']['cursors']['after']
@@ -70,13 +66,10 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
                 while_loop = False
             else:
                 last_cursor = next_cursor
-                logging.info(
-                    '[reviews] next paging cursor: {}'.format(last_cursor))
+                logging.debug('[reviews] next paging cursor: {}'.format(last_cursor))
         except Exception:
             next_cursor = None
             while_loop = False
-
-        ex_itr += 1
 
     endpoint_state = {'last_cursor': last_cursor}
 
@@ -92,7 +85,7 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
 
     entities = []
     headers = _build_headers(username, token)
-    params["per_page"] = 250
+    params["per_page"] = 500
 
     res = requests.get(url=BASE_URL + endpoint, headers=headers, params=params)
 
@@ -105,18 +98,16 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
         entities.append(res)
     else:
         starting_page = 1
-        # Limiting ex to terminate at 100th request
-        ex_itr = 0
+
         if endpoint in state_file and params['account_id'] in state_file[endpoint]:
             starting_page = state_file[endpoint][params['account_id']]["last_page_fetched"]
-            logging.info("Last fetched page: [{0}] @ [{1}]".format(
-                starting_page, endpoint))
         elif endpoint in state_file:
             starting_page = state_file[endpoint]["last_page_fetched"]
-            logging.info("Last fetched page: [{0}] @ [{1}]".format(
-                starting_page, endpoint))
+
+        if starting_page > 1:
+            logging.info(f"Last fetched page from state for endpoint {endpoint} is {starting_page}")
         else:
-            logging.info("Starting page: [1] @ [{0}]".format(endpoint))
+            logging.info(f"Starting with page {starting_page} for endpoint {endpoint}")
         first_request_params = copy.deepcopy(params)
         first_request_params["page"] = starting_page
         first_request_params["sort[by]"] = "created_at"
@@ -134,25 +125,22 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
 
         total_pages = int(res.get('_total_pages'))
 
-        logging.info("Endpoint: [{0}]; Total Pages: [{1}]".format(
-            endpoint, total_pages))
+        logging.info("Endpoint: [{0}]; Total Pages: [{1}]".format(endpoint, total_pages))
 
         # First page processing
-        logging.info(
-            "Current Page: [{0}] @ [{1}] - Parsing".format(starting_page, endpoint))
+        logging.info("Current Page: [{0}] @ [{1}] - Parsing".format(starting_page, endpoint))
         entities_curr_page = res.get("_embedded").get(endpoint)
         entities += entities_curr_page
         parse(entities_curr_page, file_name)
         starting_page += 1
 
-        while "next" in res["_links"] and ex_itr < 100:
+        while "next" in res["_links"]:
             next_url = res["_links"]["next"]["href"]
-            logging.info("Next Url: ...{0}".format(next_url[-60:]))
+            logging.debug("Next Url: ...{0}".format(next_url[-60:]))
 
             res = requests.get(url=next_url, headers=headers, params=params)
             res = json.loads(res.text)
-            logging.info(
-                "Current Page: [{0}] @ [{1}] - Parsing".format(starting_page, endpoint))
+            logging.info("Current Page: [{0}] @ [{1}] - Parsing".format(starting_page, endpoint))
 
             entities_curr_page = res.get("_embedded").get(endpoint)
             entities += entities_curr_page
@@ -168,7 +156,6 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
             else:
                 parse(entities_curr_page, file_name)
 
-            ex_itr += 1
             starting_page += 1
 
         # Update State file parameters
