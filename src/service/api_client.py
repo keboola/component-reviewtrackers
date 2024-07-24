@@ -48,7 +48,7 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
     params['sort[order]'] = 'ASC'
     last_cursor = next_cursor
 
-    while while_loop and ex_itr <= 100:
+    while while_loop and ex_itr <= 1000:
         if next_cursor:
             params['after'] = next_cursor
 
