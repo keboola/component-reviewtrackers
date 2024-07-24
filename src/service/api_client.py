@@ -40,7 +40,7 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
     if not next_cursor:
         next_cursor = state_file.get('reviews', {}).get('account_id', {}).get('last_cursor')
 
-    logging.info('[reviews] last cursor: {}'.format(next_cursor))
+    logging.info('[reviews] loaded last cursor from state: {}'.format(next_cursor))
 
     params['sort[by]'] = 'published_at'
     params['sort[order]'] = 'ASC'
@@ -68,8 +68,7 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
                 while_loop = False
             else:
                 last_cursor = next_cursor
-                logging.info(
-                    '[reviews] next paging cursor: {}'.format(last_cursor))
+                logging.info('[reviews] next paging cursor: {}'.format(last_cursor))
         except Exception:
             next_cursor = None
             while_loop = False
@@ -104,14 +103,13 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
 
         if endpoint in state_file and params['account_id'] in state_file[endpoint]:
             starting_page = state_file[endpoint][params['account_id']]["last_page_fetched"]
-            logging.info("Last fetched page: [{0}] @ [{1}]".format(
-                starting_page, endpoint))
         elif endpoint in state_file:
             starting_page = state_file[endpoint]["last_page_fetched"]
-            logging.info("Last fetched page: [{0}] @ [{1}]".format(
-                starting_page, endpoint))
+
+        if starting_page > 1:
+            logging.info(f"Last fetched page from state for endpoint {endpoint} is {starting_page}")
         else:
-            logging.info("Starting page: [1] @ [{0}]".format(endpoint))
+            logging.info(f"Starting with page {starting_page} for endpoint {endpoint}")
         first_request_params = copy.deepcopy(params)
         first_request_params["page"] = starting_page
         first_request_params["sort[by]"] = "created_at"
