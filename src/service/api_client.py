@@ -30,7 +30,7 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
 
     entities = []
     headers = _build_headers(username, token)
-    request_endpoint = 'v2/{}'.format(endpoint)
+    request_url = 'v2/{}'.format(endpoint)
     params['per_page'] = 500
 
     while_loop = True
@@ -50,7 +50,7 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
         if next_cursor:
             params['after'] = next_cursor
 
-        res = requests.get(url=BASE_URL + request_endpoint,
+        res = requests.get(url=BASE_URL + request_url,
                            headers=headers, params=params)
         res_json = res.json()
         # Outputting

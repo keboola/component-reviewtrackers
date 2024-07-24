@@ -1,8 +1,3 @@
-'''
-Template Component main class.
-
-'''
-
 from src.dep.kbc.env_handler import KBCEnvHandler
 import logging
 import job_runner
@@ -30,10 +25,10 @@ class Component(KBCEnvHandler):
             logging.error(e)
             exit(1)
 
-    def run(sel):
-        '''
+    def run(self):
+        """
         Main execution code
-        '''
+        """
         params = self.cfg_params  # noqa
         username = params.get('username')
         password = params.get('#password')
