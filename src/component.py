@@ -1,4 +1,4 @@
-from src.kbc.env_handler import KBCEnvHandler
+from kbc.env_handler import KBCEnvHandler
 import logging
 import job_runner
 
