@@ -3,7 +3,6 @@ import logging
 import os
 import sys
 import warnings
-import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
 from service.api_client import request_endpoint, request_reviews_v2, request_accounts
