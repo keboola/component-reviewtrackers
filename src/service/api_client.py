@@ -5,7 +5,7 @@ import logging
 import copy
 import sys
 
-from src.service.parser import parse
+from service.parser import parse
 
 BASE_URL = "https://api.reviewtrackers.com/"
 DEFAULT_TABLE_SOURCE = "/data/in/tables/"
