@@ -16,9 +16,7 @@ def _auth(username, password):
     Basic Authorization to Server
     """
     url = 'https://api-gateway.reviewtrackers.com/auth'
-    # logging.info("{0}:{1}".format(username, password))
     headers = {
-        # 'Authorization': "{}:{}".format(username, password),
         'Accept': "application/vnd.rtx.authorization.v2.hal+json;charset=utf-8",
         "Content-Type": "application/json"
     }
@@ -69,21 +67,6 @@ def _write_state(data_in):
     return
 
 
-def _lookup(by, by_val, get):
-    """
-    Looking up Referenced Table
-    """
-
-    if by == "endpoint" and "metrics" in by_val:
-        tmp = by_val.split("/")
-        by_val = "{}/{{account_id}}/{}".format(tmp[0], tmp[2])
-    df_lookup = pd.read_csv('/code/src/lookup.csv')
-    df_lookup = df_lookup.loc[df_lookup[by].isin([by_val])]
-    s = df_lookup[get]
-
-    return s.tolist()[0]
-
-
 def run(ui_username, ui_password, ui_clear_state):
     """
     Main Executor for Job_runner
@@ -115,7 +98,7 @@ def run(ui_username, ui_password, ui_clear_state):
                 'account_id': account
             }
             logging.info("fetching endpoint {} ...".format(endpoint))
-            file_name = _lookup(by='endpoint', by_val=endpoint, get='file_name')
+            file_name = endpoint
             if endpoint == 'reviews':
                 json_res, ex_state_new = request_reviews_v2(
                     ui_username, token, ex_state, endpoint, file_name, params)
