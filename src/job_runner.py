@@ -82,7 +82,7 @@ def run(ui_username, ui_password, ui_clear_state):
 
     # State File fetch
     logging.info("Clear State: {0}".format(ui_clear_state))
-    if not ui_clear_state:
+    if not ui_clear_state or ui_clear_state == 'false':
         ex_state = _read_state()
     else:
         logging.info("Clearing State File...")
