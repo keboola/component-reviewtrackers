@@ -23,7 +23,7 @@ def _build_headers(username, token):
     }
 
 
-def request_reviews_v2(username, token, state_file, endpoint, file_name, params):
+def request_reviews_v2(username, token, state_file, endpoint, file_name, account):
     """
     Request new review endpoint with provided parameters
     """
@@ -31,21 +31,17 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
     entities = []
     headers = _build_headers(username, token)
     request_url = 'v2/{}'.format(endpoint)
-    params['per_page'] = 500
-
-    while_loop = True
+    params = {'account_id': account, 'per_page': 500, 'sort[by]': 'published_at', 'sort[order]': 'ASC'}
 
     # Fetching last state
-    next_cursor = state_file.get('reviews', {}).get('last_cursor')
+    next_cursor = state_file.get(endpoint, {}).get('last_cursor')
     if not next_cursor:
-        next_cursor = state_file.get('reviews', {}).get('account_id', {}).get('last_cursor')
-
+        next_cursor = state_file.get(endpoint, {}).get(account, {}).get('last_cursor')
     logging.info('[reviews] loaded last cursor from state: {}'.format(next_cursor))
 
-    params['sort[by]'] = 'published_at'
-    params['sort[order]'] = 'ASC'
     last_cursor = next_cursor
 
+    while_loop = True
     while while_loop:
         if next_cursor:
             params['after'] = next_cursor
@@ -53,6 +49,8 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
         res = requests.get(url=BASE_URL + request_url,
                            headers=headers, params=params)
         res_json = res.json()
+
+        logging.info("Current Cursor: [{0}] @ [{1}] - Parsing".format(next_cursor, endpoint))
 
         try:
             parse(res_json['data'], file_name)
@@ -76,7 +74,7 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
     return entities, endpoint_state
 
 
-def request_endpoint(username, token, state_file, endpoint, file_name, params):
+def request_endpoint(username, token, state_file, endpoint, file_name, account):
     """
     Request endpoint with the provided pagination paramters
     """
@@ -85,7 +83,7 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
 
     entities = []
     headers = _build_headers(username, token)
-    params["per_page"] = 500
+    params = {'account_id': account, 'per_page': 500}
 
     res = requests.get(url=BASE_URL + endpoint, headers=headers, params=params)
 
@@ -97,17 +95,16 @@ def request_endpoint(username, token, state_file, endpoint, file_name, params):
     if 'metrics' in endpoint:
         entities.append(res)
     else:
-        starting_page = 1
 
-        if endpoint in state_file and params['account_id'] in state_file[endpoint]:
-            starting_page = state_file[endpoint][params['account_id']]["last_page_fetched"]
-        elif endpoint in state_file:
-            starting_page = state_file[endpoint]["last_page_fetched"]
-
-        if starting_page > 1:
-            logging.info(f"Last fetched page from state for endpoint {endpoint} is {starting_page}")
-        else:
+        starting_page = state_file.get(endpoint, {}).get('last_page_fetched')
+        if not starting_page:
+            starting_page = state_file.get(endpoint, {}).get(account, {}).get('last_page_fetched')
+        if not starting_page:
+            starting_page = 1
             logging.info(f"Starting with page {starting_page} for endpoint {endpoint}")
+        else:
+            logging.info(f"Last fetched page from state for endpoint {endpoint} is {starting_page}")
+
         first_request_params = copy.deepcopy(params)
         first_request_params["page"] = starting_page
         first_request_params["sort[by]"] = "created_at"

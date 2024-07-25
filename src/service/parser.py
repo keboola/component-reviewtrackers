@@ -3,10 +3,8 @@ import json
 import logging
 import pandas as pd
 
-
 DEFAULT_TABLE_SOURCE = "/data/in/tables/"
 DEFAULT_TABLE_DESTINATION = "/data/out/tables/"
-
 
 review_header = [
     "account_id",
@@ -153,11 +151,11 @@ def _produce_manifest(file_name, primary_key, columns):
     Create manifest file
     """
 
-    file = "/data/out/tables/" + str(file_name)+".csv.manifest"
+    file = "/data/out/tables/" + str(file_name) + ".csv.manifest"
 
     manifest = {
         "incremental": True,
-        "primary_key": [primary_key],
+        "primary_key": primary_key,
         "columns": columns
     }
     logging.debug(manifest)
@@ -171,8 +169,7 @@ def _produce_manifest(file_name, primary_key, columns):
         logging.error(e)
 
 
-def _output(filename, headers, data_in, primary_key="id"):
-
+def _output(filename, headers, data_in, primary_key):
     dest = DEFAULT_TABLE_DESTINATION + filename + ".csv"
     data = pd.DataFrame(data_in, columns=headers)
 
@@ -217,12 +214,12 @@ def parse(data_in, endpoint):
 
     if endpoint == "reviews":
         data_out, header = _review_parse(data_in)
-        _output(endpoint, header, data_out, "id, updated_at")
+        _output(endpoint, header, data_out, ["id", "updated_at"])
     elif endpoint == "locations":
         data_out, header = _location_parse(data_in)
-        _output(endpoint, header, data_out)
+        _output(endpoint, header, data_out, ["id"])
     elif endpoint == "responses":
         data_out, header = _response_parse(data_in)
-        _output(endpoint, header, data_out)
+        _output(endpoint, header, data_out, ["id"])
 
     return
