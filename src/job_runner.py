@@ -91,7 +91,8 @@ def run(ui_username, ui_password, ui_clear_state):
     accounts = request_accounts(ui_username, token)
 
     for endpoint in ui_endpoints:
-        # accounts_state = {}
+        if endpoint not in ex_state:
+            ex_state[endpoint] = {}
 
         for account in accounts:
             logging.info(f"fetching endpoint {endpoint} for account {account} ...")
@@ -107,7 +108,6 @@ def run(ui_username, ui_password, ui_clear_state):
                     "Endpoint [{}] not found, 404 Error".format(endpoint))
                 continue
 
-            # accounts_state[account] = ex_state_new
             ex_state[endpoint][account] = ex_state_new
 
         # State File Content after 1 Endpoint extraction
