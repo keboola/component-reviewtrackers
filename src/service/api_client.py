@@ -38,7 +38,8 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
     # Fetching last state
     next_cursor = state_file.get('reviews', {}).get('last_cursor')
     if not next_cursor:
-        next_cursor = state_file.get('reviews', {}).get('account_id', {}).get('last_cursor')
+        account_id = params.get('account_id')
+        next_cursor = state_file.get('reviews', {}).get(account_id, {}).get('last_cursor')
 
     logging.info('[reviews] loaded last cursor from state: {}'.format(next_cursor))
 
