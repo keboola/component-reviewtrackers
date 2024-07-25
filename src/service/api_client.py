@@ -54,6 +54,8 @@ def request_reviews_v2(username, token, state_file, endpoint, file_name, params)
                            headers=headers, params=params)
         res_json = res.json()
 
+        logging.info("Current Cursor: [{0}] @ [{1}] - Parsing".format(next_cursor, endpoint))
+
         try:
             parse(res_json['data'], file_name)
         except Exception as e:
