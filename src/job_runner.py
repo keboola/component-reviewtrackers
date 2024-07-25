@@ -91,26 +91,24 @@ def run(ui_username, ui_password, ui_clear_state):
     accounts = request_accounts(ui_username, token)
 
     for endpoint in ui_endpoints:
-        accounts_state = {}
+        # accounts_state = {}
+
         for account in accounts:
-            params = {
-                'account_id': account
-            }
-            logging.info("fetching endpoint {} ...".format(endpoint))
+            logging.info(f"fetching endpoint {endpoint} for account {account} ...")
             file_name = endpoint
             if endpoint == 'reviews':
                 json_res, ex_state_new = request_reviews_v2(
-                    ui_username, token, ex_state, endpoint, file_name, params)
+                    ui_username, token, ex_state, endpoint, file_name, account)
             else:
                 json_res, ex_state_new = request_endpoint(
-                    ui_username, token, ex_state, endpoint, file_name, params)
+                    ui_username, token, ex_state, endpoint, file_name, account)
             if json_res == 404:
                 logging.warning(
                     "Endpoint [{}] not found, 404 Error".format(endpoint))
                 continue
 
-            accounts_state[account] = ex_state_new
-        ex_state[endpoint] = accounts_state
+            # accounts_state[account] = ex_state_new
+            ex_state[endpoint][account] = ex_state_new
 
         # State File Content after 1 Endpoint extraction
         logging.info("Extractor State: {0}".format(ex_state))
